@@ -54,24 +54,23 @@ def fetch_katsina_population() -> list[Grid3LgaPopulation]:
     fetched_at = now_utc()
     records: list[Grid3LgaPopulation] = []
 
-    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
-        with zf.open(LGA_CSV_NAME) as f:
-            text_stream = io.TextIOWrapper(f, encoding="utf-8")
-            reader = csv_module.DictReader(text_stream)
-            for row in reader:
-                if row["state"].strip() != "Katsina":
-                    continue
-                records.append(
-                    Grid3LgaPopulation(
-                        state=row["state"].strip(),
-                        lga_name=row["local"].strip(),
-                        population_mean=float(row["mean"]),
-                        population_q025=float(row["q025"]),
-                        population_q975=float(row["q975"]),
-                        source_label=GRID3_DATASET_LABEL,
-                        fetched_at=fetched_at,
-                    )
+    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf, zf.open(LGA_CSV_NAME) as f:
+        text_stream = io.TextIOWrapper(f, encoding="utf-8")
+        reader = csv_module.DictReader(text_stream)
+        for row in reader:
+            if row["state"].strip() != "Katsina":
+                continue
+            records.append(
+                Grid3LgaPopulation(
+                    state=row["state"].strip(),
+                    lga_name=row["local"].strip(),
+                    population_mean=float(row["mean"]),
+                    population_q025=float(row["q025"]),
+                    population_q975=float(row["q975"]),
+                    source_label=GRID3_DATASET_LABEL,
+                    fetched_at=fetched_at,
                 )
+            )
 
     if len(records) != 34:
         logger.warning(
@@ -102,22 +101,21 @@ def write_snapshot_csv(records: list[Grid3LgaPopulation]) -> Path:
 
 def write_to_postgres(records: list[Grid3LgaPopulation]) -> None:
     ensure_raw_schema()
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.executemany(
-                """
+    with get_connection() as conn, conn.cursor() as cur:
+        cur.executemany(
+            """
                 INSERT INTO raw.grid3_lga_population (
                     state, lga_name, population_mean, population_q025,
                     population_q975, source_label, fetched_at
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (lga_name, fetched_at) DO NOTHING
                 """,
-                [
-                    (r.state, r.lga_name, r.population_mean, r.population_q025,
-                     r.population_q975, r.source_label, r.fetched_at)
-                    for r in records
-                ],
-            )
+            [
+                (r.state, r.lga_name, r.population_mean, r.population_q025,
+                 r.population_q975, r.source_label, r.fetched_at)
+                for r in records
+            ],
+        )
 
 
 def main() -> int:

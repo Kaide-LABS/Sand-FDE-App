@@ -28,9 +28,9 @@ select
     t.denominator_source_text,
     g.population_mean as grid3_population_mean,
     g.source_label as grid3_source_label,
-    round(g.population_mean * t.population_fraction, 1) as grid3_eligible_population,
+    round((g.population_mean * t.population_fraction)::numeric, 1) as grid3_eligible_population,
     round(
-        (t.value / 100.0) * (g.population_mean * t.population_fraction),
+        ((t.value / 100.0) * (g.population_mean * t.population_fraction))::numeric,
         1
     ) as implied_headcount,
     (t.value > 100.0) as is_impossible,

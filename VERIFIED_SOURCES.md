@@ -70,15 +70,55 @@ uptake, and notification volume during lockdown). It contains no comparison betw
 Facility Registry's facility counts and any independent private-facility census. It cannot support a
 claim about HFR undercounting. Red-team finding confirmed -- do not cite this paper for that claim.
 
-## Still open
+## Resolved during the build phase
 
-### MSDAT live-API accessibility
-`https://msdat.fmohconnect.gov.ng/` renders as a JS-driven single-page app -- a static fetch returns
-no substantive content, only a page title. This does not confirm or rule out a scrapable underlying
-API; it only confirms that the answer cannot be determined by fetching the page as HTML. Needs
-hands-on verification (browser network-tab inspection, or direct probing of likely DHIS2-analytics-API
-style endpoints) during the build phase before the ingestion DAG is designed around an assumed
-API/export path.
+### MSDAT live-API accessibility -- RESOLVED: a genuine, scrapable, credential-free API exists
+Investigated 2026-08-10 by headless-browser network-tab inspection of
+`https://msdat.fmohconnect.gov.ng/dashboard/Health_Outcomes_and_Service_Coverage`, followed by direct
+probing with plain HTTP requests to confirm the browser was not load-bearing. Findings:
+
+- MSDAT's public web app calls a real REST backend at `https://msdat-api.fmohconnect.gov.ng/api/`.
+- Anonymous visitors are issued a short-lived (~15 minute) JWT by `POST
+  {base}auth/frontend-token/`, authenticated with two header values --
+  `x-frontend-key-id: msdat_key_v1` and a matching `x-frontend-auth` hash -- that are **static,
+  shipped in plaintext inside MSDAT's own public JS bundle**
+  (`VUE_APP_FRONTEND_KEY_ID` / `VUE_APP_FRONTEND_AUTH` in `js/app.<hash>.js`). This is the exact
+  mechanism every browser that loads the public dashboard uses; it is not a Ministry-issued
+  credential, there is no account, login form, or registration involved, and the same two static
+  values work from a plain `requests.post()` call with no browser at all (verified directly).
+- That token, sent as `x-frontend-jwt: Token <jwt>`, authorizes read access to
+  `/api/location/`, `/api/indicators/`, `/api/datasources/`, `/api/datasource_specific_indicator/`,
+  and `/api/data/` -- the endpoints that actually carry indicator values.
+- Location hierarchy: Katsina State is `location=28`; its 34 LGAs are a specific, enumerated set of
+  location IDs (see `ingestion/config.py`) one level below it.
+- Data grain, established by direct query (not assumed): MSDAT's **NHMIS (Facility-based)**
+  datasource (`datasource=6`) publishes LGA-level values, but at **annual** grain only (period
+  labels like `"2024"`). MSDAT also runs an **NHMIS monthly (Facility-based)** datasource
+  (`datasource=30`) with true month-grain periods (e.g. `"Jun 2026"`), but querying it for any
+  Katsina LGA location ID returns zero rows -- it only publishes at State and National level.
+  True LGA-by-month figures exist only inside raw facility-level DHIS2/NHMIS, which is out of scope
+  (credential-gated). This is why the pipeline's reporting-volume-attrition test operates
+  year-over-year rather than month-over-month -- see `warehouse/dbt/models/marts/lga_reporting_attrition.sql`.
+- MSDAT's own indicator metadata (`/api/datasource_specific_indicator/`) documents, for several
+  coverage indicators, an explicit fixed population-fraction denominator in plain text -- e.g. ANC
+  Coverage (1 Visit): "5% of the total population"; DPT3/Penta 3 coverage: "4% of the total
+  population". These strings are quoted directly from MSDAT's own API response, not inferred, and
+  are what the biological-impossibility test's population denominators are built from (in
+  combination with GRID3, not MSDAT's own unstated population source -- see below).
+
+Net effect on scope: no manual-extraction fallback was needed. Every MSDAT figure this pipeline
+uses is a live pull against the real API, re-executed on every pipeline run.
+
+### GRID3 LGA population baseline
+GRID3/WorldPop "Bottom-up gridded population estimates for Nigeria", version 1.2 (CC BY 4.0),
+published via the Humanitarian Data Exchange:
+https://data.humdata.org/dataset/bottom-up-gridded-population-estimates-for-nigeria . The
+admin-level-3 (LGA) summary CSV inside that release's `NGA_population_v1_2_admin.zip` (resolved via
+HDX's own package API to `https://wopr.worldpop.org/download/2` as of 2026-08-10) contains all 774
+Nigerian LGAs, including all 34 Katsina LGAs by name, with a posterior mean population estimate and
+a 95% uncertainty interval (q025-q975) per LGA. This is the population denominator source the
+biological-impossibility test uses -- independent of whatever population figure MSDAT itself uses
+internally, which MSDAT does not document.
 
 ## Not yet re-verified
 

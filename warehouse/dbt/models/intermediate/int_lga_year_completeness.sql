@@ -1,4 +1,4 @@
--- Per LGA-year: how many of the {{ }} reporting-basket indicators MSDAT
+-- Per LGA-year: how many of the reporting-basket indicators MSDAT
 -- actually has a value for, out of the full basket size. This is our proxy for
 -- "reported indicator volume" at the only grain MSDAT's public LGA-level
 -- aggregate actually publishes (annual) -- see the reporting-volume-attrition

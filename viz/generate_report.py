@@ -66,10 +66,9 @@ def fetch_audit_rows() -> list[ToxicityAuditRow]:
         from {MARTS_SCHEMA}.lga_data_toxicity_audit
         order by toxicity_score desc, lga_name asc
     """
-    with psycopg.connect(_database_url(), row_factory=dict_row) as conn:
-        with conn.cursor() as cur:
-            cur.execute(query)  # type: ignore[arg-type]
-            rows = cur.fetchall()
+    with psycopg.connect(_database_url(), row_factory=dict_row) as conn, conn.cursor() as cur:
+        cur.execute(query)
+        rows = cur.fetchall()
     return [ToxicityAuditRow.model_validate(row) for row in rows]
 
 

@@ -136,10 +136,9 @@ def write_snapshot_csv(records: list[MsdatIndicatorValue]) -> Path:
 
 def write_to_postgres(records: list[MsdatIndicatorValue]) -> None:
     ensure_raw_schema()
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.executemany(
-                """
+    with get_connection() as conn, conn.cursor() as cur:
+        cur.executemany(
+            """
                 INSERT INTO raw.msdat_indicator_values (
                     record_id, indicator_id, indicator_name, datasource_id,
                     location_id, lga_name, period, year, value,
@@ -147,23 +146,23 @@ def write_to_postgres(records: list[MsdatIndicatorValue]) -> None:
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (record_id, fetched_at) DO NOTHING
                 """,
-                [
-                    (
-                        r.record_id,
-                        r.indicator_id,
-                        r.indicator_name,
-                        r.datasource_id,
-                        r.location_id,
-                        r.lga_name,
-                        r.period,
-                        r.year,
-                        r.value,
-                        r.msdat_updated_at,
-                        r.fetched_at,
-                    )
-                    for r in records
-                ],
-            )
+            [
+                (
+                    r.record_id,
+                    r.indicator_id,
+                    r.indicator_name,
+                    r.datasource_id,
+                    r.location_id,
+                    r.lga_name,
+                    r.period,
+                    r.year,
+                    r.value,
+                    r.msdat_updated_at,
+                    r.fetched_at,
+                )
+                for r in records
+            ],
+        )
 
 
 def main() -> int:

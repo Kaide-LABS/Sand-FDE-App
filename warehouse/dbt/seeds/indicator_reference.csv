@@ -12,7 +12,7 @@ indicator_id,indicator_name,in_reporting_basket,in_impossibility_test,population
 6,ANC Coverage (4 Visits),true,true,0.05,5% of the total population
 4,Contraceptive Prevalence Rate,true,false,,
 31,Infant Mortality Rate,true,false,,
-16,Underweight Rate (<5 years, facility),true,false,,
+16,"Underweight Rate (<5 years, facility)",true,false,,
 29,Maternal mortality ratio (facility),true,false,,
 20,Measles Dose Coverage (Annualized),true,true,0.04,4% of the total Population
 1,Fertility Rate,true,false,,

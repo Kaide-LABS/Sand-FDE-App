@@ -9,7 +9,18 @@ test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 
-target-path: "target"
+
+# Written to container-local scratch paths, not the bind-mounted project
+# directory, on purpose: dbt runs from two different container images in this
+# project (the "pipeline" one-off runner and the Airflow image), which don't
+# share a UID. If target/logs lived under the bind mount, whichever container
+# touched them first would leave them owned by its own UID, and the other
+# container would then fail with a permission error trying to write there.
+# Neither directory needs to be shared or persisted -- they're build
+# artifacts -- so keeping them container-local sidesteps the problem
+# entirely instead of trying to reconcile UIDs across images.
+target-path: "{{ env_var('DBT_TARGET_PATH', 'target') }}"
+log-path: "{{ env_var('DBT_LOG_PATH', 'logs') }}"
 clean-targets:
   - "target"
   - "dbt_packages"

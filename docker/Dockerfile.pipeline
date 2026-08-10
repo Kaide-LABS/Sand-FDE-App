@@ -16,8 +16,22 @@ COPY ingestion /opt/pipeline/ingestion
 COPY warehouse /opt/pipeline/warehouse
 COPY viz /opt/pipeline/viz
 
+# Same UID the official Airflow image's "airflow" user runs as. Both this
+# image and Dockerfile.airflow write to the same bind-mounted host
+# directories (warehouse/, data_snapshots/) at runtime; if they ran as
+# different UIDs, whichever container touched a file first would leave it
+# owned by a UID the other container's non-root user can't write to. Running
+# both as UID 50000 sidesteps that instead of chasing it file by file.
+RUN useradd --uid 50000 --gid 0 --no-create-home --shell /usr/sbin/nologin pipeline \
+    && chown -R 50000:0 /opt/pipeline
+USER 50000
+
 ENV PYTHONPATH=/opt/pipeline
 ENV DBT_PROJECT_DIR=/opt/pipeline/warehouse/dbt
 ENV DBT_PROFILES_DIR=/opt/pipeline/warehouse/dbt
+# Container-local, not under the bind-mounted project dir -- see the comment
+# in warehouse/dbt/dbt_project.yml for why.
+ENV DBT_TARGET_PATH=/tmp/dbt_target
+ENV DBT_LOG_PATH=/tmp/dbt_logs
 
 CMD ["python", "-m", "ingestion.fetch_msdat"]

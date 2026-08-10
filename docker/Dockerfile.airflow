@@ -19,3 +19,7 @@ RUN pip install --no-cache-dir \
 ENV PYTHONPATH=/opt/airflow/project
 ENV DBT_PROJECT_DIR=/opt/airflow/project/warehouse/dbt
 ENV DBT_PROFILES_DIR=/opt/airflow/project/warehouse/dbt
+# Container-local, not under the bind-mounted project dir -- see the comment
+# in warehouse/dbt/dbt_project.yml for why.
+ENV DBT_TARGET_PATH=/tmp/dbt_target
+ENV DBT_LOG_PATH=/tmp/dbt_logs

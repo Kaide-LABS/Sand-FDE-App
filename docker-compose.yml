@@ -1,5 +1,3 @@
-version: "3.9"
-
 # Local-only stack. Nothing here is exposed beyond localhost and nothing runs
 # on a schedule -- the Airflow DAG is triggered by hand (see README.md). Two
 # services only: the warehouse (Postgres + PostGIS) and Airflow itself, run in

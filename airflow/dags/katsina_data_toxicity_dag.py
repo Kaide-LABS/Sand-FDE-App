@@ -37,6 +37,10 @@ DBT_ENV = {
     "PGUSER": "katsina",
     "PGPASSWORD": "katsina",
     "PGDATABASE": "katsina_data_quality",
+    # Container-local scratch paths -- see warehouse/dbt/dbt_project.yml for
+    # why these can't just live under the bind-mounted project directory.
+    "DBT_TARGET_PATH": "/tmp/dbt_target",
+    "DBT_LOG_PATH": "/tmp/dbt_logs",
     "DATABASE_URL": "postgresql://katsina:katsina@postgres:5432/katsina_data_quality",
 }
 

@@ -20,6 +20,17 @@ dev = [
 [tool.mypy]
 python_version = "3.11"
 strict = true
+# Scoped to the two packages that hold this project's actual logic and typed
+# data models (ingestion's Pydantic models + HTTP clients, viz's report
+# renderer). airflow/dags/katsina_data_toxicity_dag.py is deliberately
+# excluded: it is thin orchestration glue (import wiring, two trivial
+# wrapper callables), and getting Airflow's own operator submodules
+# (airflow.operators.bash, airflow.operators.python) to resolve cleanly under
+# mypy --strict requires pinning the exact provider packages that match the
+# Docker image's Airflow version purely for type-checking, which is more
+# machinery than the file's own content justifies. The functions the DAG
+# calls into (ingestion.fetch_msdat.main, ingestion.fetch_grid3.main) are
+# themselves covered here.
 files = ["ingestion", "viz"]
 exclude = ["warehouse/dbt"]
 

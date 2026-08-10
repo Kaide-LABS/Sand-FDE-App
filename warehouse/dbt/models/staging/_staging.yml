@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: msdat_indicator_values
+        description: >
+          Live pull of MSDAT's NHMIS (Facility-based) datasource (id 6),
+          restricted to Katsina State's 34 LGAs. Populated by
+          ingestion/fetch_msdat.py. MSDAT's own platform disclaimer states a
+          typical two-month reporting lag before data appears on the system
+          (quoted verbatim in VERIFIED_SOURCES.md); values reflect whatever
+          MSDAT had published at the moment this pipeline last ran.
+      - name: grid3_lga_population
+        description: >
+          GRID3/WorldPop "Bottom-up gridded population estimates for
+          Nigeria" v1.2 (CC BY 4.0), LGA (admin-level-3) summary, restricted
+          to Katsina State. Populated by ingestion/fetch_grid3.py.
+
+models:
+  - name: stg_msdat_indicator_values
+    description: Deduplicated, most-recent-snapshot view of raw.msdat_indicator_values.
+  - name: stg_grid3_population
+    description: Deduplicated, most-recent-snapshot view of raw.grid3_lga_population.

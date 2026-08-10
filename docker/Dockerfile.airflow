@@ -1,0 +1,21 @@
+# Airflow image with this project's ingestion/dbt dependencies installed, so
+# DAG tasks (PythonOperator / BashOperator) can import `ingestion.*` and shell
+# out to `dbt` directly, with no extra containers to orchestrate.
+FROM apache/airflow:2.9.3-python3.11
+
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        gcc \
+        libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+USER airflow
+
+RUN pip install --no-cache-dir \
+        requests>=2.31 \
+        "pydantic>=2.6" \
+        "psycopg[binary]>=3.1" \
+        "dbt-postgres>=1.7,<1.8"
+
+ENV PYTHONPATH=/opt/airflow/project
+ENV DBT_PROJECT_DIR=/opt/airflow/project/warehouse/dbt
+ENV DBT_PROFILES_DIR=/opt/airflow/project/warehouse/dbt

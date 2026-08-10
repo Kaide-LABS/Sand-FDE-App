@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: lga_reporting_attrition
+    description: >
+      Constraint 1 output: reporting-volume attrition, per LGA, at its
+      most recent year vs. the prior year. See the model SQL for the full
+      Gombe-study-grounded threshold rationale.
+    columns:
+      - name: location_id
+        tests:
+          - unique
+          - not_null
+
+  - name: lga_biological_impossibility
+    description: >
+      Constraint 2 output: biological-impossibility incidents, aggregated
+      per LGA across 2015-2025.
+    columns:
+      - name: location_id
+        tests:
+          - unique
+          - not_null
+
+  - name: lga_data_toxicity_audit
+    description: >
+      THE DELIVERABLE. Ranked LGA data-toxicity audit list: every Katsina
+      LGA, its toxicity_score (higher = less trustworthy data) and a
+      human-readable toxicity_reasons string. Not a health-metrics
+      dashboard -- no health outcome is scored here, only reporting
+      reliability.
+    columns:
+      - name: location_id
+        tests:
+          - unique
+          - not_null
+      - name: toxicity_score
+        tests:
+          - not_null

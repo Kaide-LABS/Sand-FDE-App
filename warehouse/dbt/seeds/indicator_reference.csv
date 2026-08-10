@@ -1,0 +1,25 @@
+indicator_id,indicator_name,in_reporting_basket,in_impossibility_test,population_fraction,denominator_source_text
+23,Antenatal revisits receiving IPT2,true,false,,
+5,ANC Coverage (1 Visit),true,true,0.05,5% of the total population
+21,Pct children fully immunized by age 1,true,true,0.04,4% of the total population
+30,Neonatal mortality rate (facility),true,false,,
+32,Under 5 mortality rate (facility),true,false,,
+584,Rotavirus 1 Vaccine Coverage,true,true,0.04,0.04*Total Population
+585,Rotavirus 2 Vaccine Coverage,true,true,0.04,0.04*Total Population
+586,Rotavirus 3 Vaccine Coverage,true,true,0.04,0.04*Total Population
+587,Yellow Fever Coverage,true,true,0.04,0.04*Total Population
+19,IPV Coverage (Annualized),true,true,0.04,4% of the total Population
+6,ANC Coverage (4 Visits),true,true,0.05,5% of the total population
+4,Contraceptive Prevalence Rate,true,false,,
+31,Infant Mortality Rate,true,false,,
+16,Underweight Rate (<5 years, facility),true,false,,
+29,Maternal mortality ratio (facility),true,false,,
+20,Measles Dose Coverage (Annualized),true,true,0.04,4% of the total Population
+1,Fertility Rate,true,false,,
+18,DPT 3/Penta 3 coverage rate (Annualized),true,true,0.04,4% of the total population
+457,Deliveries by skilled birth attendants,true,false,,
+212,DPT 1/Penta 1 coverage rate (Annualized),true,true,0.04,4% of the total population
+410,Tetanus Toxoid (2+) Coverage,true,true,0.05,Total Population *0.05
+22,Pct Antenatal 1st Visits receiving IPT1,true,false,,
+398,PNC1 / Live births,true,false,,
+330,Antenatal 1st visits before 20 weeks rate,true,false,,

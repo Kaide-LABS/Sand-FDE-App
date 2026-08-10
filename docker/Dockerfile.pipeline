@@ -1,0 +1,23 @@
+# Runtime image for the ingestion + dbt layer, used both standalone (docker
+# compose run pipeline ...) and as the executor image Airflow's tasks run in.
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        gcc \
+        libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/pipeline
+
+COPY pyproject.toml /opt/pipeline/
+RUN pip install --no-cache-dir requests>=2.31 "pydantic>=2.6" "psycopg[binary]>=3.1" "dbt-postgres>=1.7,<1.8"
+
+COPY ingestion /opt/pipeline/ingestion
+COPY warehouse /opt/pipeline/warehouse
+COPY viz /opt/pipeline/viz
+
+ENV PYTHONPATH=/opt/pipeline
+ENV DBT_PROJECT_DIR=/opt/pipeline/warehouse/dbt
+ENV DBT_PROFILES_DIR=/opt/pipeline/warehouse/dbt
+
+CMD ["python", "-m", "ingestion.fetch_msdat"]

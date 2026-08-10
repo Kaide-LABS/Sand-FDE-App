@@ -1,0 +1,79 @@
+version: "3.9"
+
+# Local-only stack. Nothing here is exposed beyond localhost and nothing runs
+# on a schedule -- the Airflow DAG is triggered by hand (see README.md). Two
+# services only: the warehouse (Postgres + PostGIS) and Airflow itself, run in
+# `airflow standalone` mode (SQLite metadata DB, SequentialExecutor) so there
+# is no Celery/Redis/multi-worker machinery to stand up for a single
+# on-demand DAG.
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: katsina_postgres
+    environment:
+      POSTGRES_USER: katsina
+      POSTGRES_PASSWORD: katsina
+      POSTGRES_DB: katsina_data_quality
+    ports:
+      - "5442:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U katsina -d katsina_data_quality"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # One-off runner for ingestion scripts / dbt / the viz generator, used both
+  # for manual `docker compose run --rm pipeline ...` invocations and as the
+  # image the Airflow DAG's tasks are documented against. Not started by
+  # `docker compose up` -- it has no long-running process.
+  pipeline:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.pipeline
+    container_name: katsina_pipeline
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://katsina:katsina@postgres:5432/katsina_data_quality
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGUSER: katsina
+      PGPASSWORD: katsina
+      PGDATABASE: katsina_data_quality
+    volumes:
+      - ./ingestion:/opt/pipeline/ingestion
+      - ./warehouse:/opt/pipeline/warehouse
+      - ./viz:/opt/pipeline/viz
+      - ./data_snapshots:/opt/pipeline/data_snapshots
+    profiles: ["tools"]
+
+  airflow:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.airflow
+    container_name: katsina_airflow
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      AIRFLOW_HOME: /opt/airflow
+      DATABASE_URL: postgresql://katsina:katsina@postgres:5432/katsina_data_quality
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./ingestion:/opt/airflow/project/ingestion
+      - ./warehouse:/opt/airflow/project/warehouse
+      - ./viz:/opt/airflow/project/viz
+      - ./data_snapshots:/opt/airflow/project/data_snapshots
+      - airflow_home:/opt/airflow
+    command: standalone
+
+volumes:
+  pgdata:
+  airflow_home:

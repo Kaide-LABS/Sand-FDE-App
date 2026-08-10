@@ -1,0 +1,32 @@
+[project]
+name = "katsina-data-toxicity-audit"
+version = "0.1.0"
+description = "Deterministic data-quality triangulation pipeline for Katsina State, Nigeria."
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.31",
+    "pydantic>=2.6",
+    "psycopg[binary]>=3.1",
+    "dbt-postgres>=1.7,<1.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy>=1.9",
+    "types-requests",
+    "ruff>=0.4",
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["ingestion", "viz"]
+exclude = ["warehouse/dbt"]
+
+[[tool.mypy.overrides]]
+module = ["psycopg.*"]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

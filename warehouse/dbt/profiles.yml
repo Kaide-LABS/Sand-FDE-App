@@ -1,0 +1,12 @@
+katsina_data_quality:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('PGHOST', 'localhost') }}"
+      port: "{{ env_var('PGPORT', '5442') | as_number }}"
+      user: "{{ env_var('PGUSER', 'katsina') }}"
+      password: "{{ env_var('PGPASSWORD', 'katsina') }}"
+      dbname: "{{ env_var('PGDATABASE', 'katsina_data_quality') }}"
+      schema: dbt
+      threads: 4

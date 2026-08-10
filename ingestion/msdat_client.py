@@ -2,7 +2,8 @@
 
 Nothing here talks to a browser or requires Ministry credentials: it replicates
 exactly the two HTTP calls MSDAT's own public web app makes on every page load
-(see config.py for how those calls, and the frontend key they use, were found).
+-- the frontend key those calls use is extracted at run time from MSDAT's own
+live JS (see msdat_key_discovery.py), never hardcoded.
 """
 
 from __future__ import annotations
@@ -14,7 +15,8 @@ from typing import Any
 
 import requests
 
-from ingestion.config import MSDAT_API_BASE, MSDAT_FRONTEND_AUTH, MSDAT_FRONTEND_KEY_ID
+from ingestion.config import MSDAT_API_BASE
+from ingestion.msdat_key_discovery import discover_frontend_key
 
 logger = logging.getLogger(__name__)
 
@@ -42,11 +44,12 @@ class MsdatClient:
         now = time.monotonic()
         if self._token is not None and (now - self._token_fetched_at) < self._token_ttl_seconds:
             return self._token
+        frontend_key = discover_frontend_key()
         resp = self._session.post(
             f"{self._base_url}auth/frontend-token/",
             headers={
-                "x-frontend-key-id": MSDAT_FRONTEND_KEY_ID,
-                "x-frontend-auth": MSDAT_FRONTEND_AUTH,
+                "x-frontend-key-id": frontend_key.key_id,
+                "x-frontend-auth": frontend_key.auth,
                 "content-type": "application/json",
                 "accept": "application/json",
             },

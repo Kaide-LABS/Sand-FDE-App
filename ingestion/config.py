@@ -22,9 +22,19 @@ from __future__ import annotations
 # same mechanism every browser that loads the public dashboard uses -- it is not a
 # Ministry-issued credential, there is no login form involved, and no account is
 # required to obtain it. See README.md for the exact discovery steps.
+#
+# Deliberately NOT hardcoded here: the two header values themselves. Even
+# though they are genuinely public (shipped in MSDAT's own client-side JS to
+# every visitor), pinning them as literals in tracked source is bad practice
+# independent of that -- they'd silently go stale if MSDAT ever rotates them,
+# and a credential-shaped literal string sitting in a public repo is exactly
+# the kind of thing a secret scanner (or a human reviewer's first `git log
+# -p`) flags on sight, which would undermine an artifact whose whole point is
+# engineering judgment. ingestion/msdat_key_discovery.py extracts them at run
+# time from MSDAT's own live JS bundle instead -- the same place a browser
+# effectively gets them from, done in code rather than by hand.
 MSDAT_API_BASE = "https://msdat-api.fmohconnect.gov.ng/api/"
-MSDAT_FRONTEND_KEY_ID = "msdat_key_v1"
-MSDAT_FRONTEND_AUTH = "REDACTED_MSDAT_FRONTEND_AUTH_KEY_SEE_ingestion_msdat_key_discovery_py"
+MSDAT_HOMEPAGE_URL = "https://msdat.fmohconnect.gov.ng/"
 
 # --- Location hierarchy ------------------------------------------------------
 # MSDAT location IDs, taken verbatim from GET {MSDAT_API_BASE}location/?size=1500.

@@ -79,13 +79,16 @@ probing with plain HTTP requests to confirm the browser was not load-bearing. Fi
 
 - MSDAT's public web app calls a real REST backend at `https://msdat-api.fmohconnect.gov.ng/api/`.
 - Anonymous visitors are issued a short-lived (~15 minute) JWT by `POST
-  {base}auth/frontend-token/`, authenticated with two header values --
-  `x-frontend-key-id: msdat_key_v1` and a matching `x-frontend-auth` hash -- that are **static,
-  shipped in plaintext inside MSDAT's own public JS bundle**
-  (`VUE_APP_FRONTEND_KEY_ID` / `VUE_APP_FRONTEND_AUTH` in `js/app.<hash>.js`). This is the exact
-  mechanism every browser that loads the public dashboard uses; it is not a Ministry-issued
-  credential, there is no account, login form, or registration involved, and the same two static
-  values work from a plain `requests.post()` call with no browser at all (verified directly).
+  {base}auth/frontend-token/`, authenticated with two header values (`x-frontend-key-id` and a
+  matching `x-frontend-auth` hash) that are **static, shipped in plaintext inside MSDAT's own
+  public JS bundle** (`VUE_APP_FRONTEND_KEY_ID` / `VUE_APP_FRONTEND_AUTH` in `js/app.<hash>.js`).
+  This is the exact mechanism every browser that loads the public dashboard uses; it is not a
+  Ministry-issued credential, there is no account, login form, or registration involved, and the
+  same two static values work from a plain `requests.post()` call with no browser at all (verified
+  directly). The exact values are deliberately not reproduced here or anywhere else in this repo --
+  `ingestion/msdat_key_discovery.py` extracts them at run time from MSDAT's own live JS on every
+  pipeline invocation instead of pinning them as literals, so nothing credential-shaped sits in
+  tracked source regardless of how public the underlying value is.
 - That token, sent as `x-frontend-jwt: Token <jwt>`, authorizes read access to
   `/api/location/`, `/api/indicators/`, `/api/datasources/`, `/api/datasource_specific_indicator/`,
   and `/api/data/` -- the endpoints that actually carry indicator values.

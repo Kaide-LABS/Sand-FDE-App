@@ -61,3 +61,15 @@ class MsdatLocation(BaseModel):
     name: str
     parent_id: int | None
     level: int
+
+
+class MsdatFrontendKey(BaseModel):
+    """MSDAT's public frontend-auth key pair, extracted at run time from
+    MSDAT's own live JS bundle -- see ingestion/msdat_key_discovery.py.
+    Deliberately never hardcoded as a literal anywhere in this repo.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    key_id: str
+    auth: str

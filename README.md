@@ -2,7 +2,7 @@
 
 A deterministic data-quality triangulation pipeline for Katsina State, Nigeria.
 It ingests genuinely open Nigerian health data (MSDAT aggregate indicators,
-GRID3 population baselines), runs two deterministic checks over it, and
+GRID3 LGA-level population estimates), runs two deterministic checks over it, and
 produces a **ranked list of which of Katsina's 34 LGAs have the least
 trustworthy reported data, and why** -- not a health-metrics dashboard.
 
@@ -43,7 +43,7 @@ Ministry credentials, no account of any kind, no API keys.
 git clone <this repo>
 cd Sand_FDE
 
-# 1. Start the warehouse (Postgres + PostGIS) and Airflow (standalone mode).
+# 1. Start the warehouse (Postgres) and Airflow (standalone mode).
 docker compose up -d postgres
 docker compose up -d --build airflow
 
@@ -119,7 +119,7 @@ docker compose run --rm pipeline python -m viz.generate_report
               |                                |
               +---------------+----------------+
                               v
-                 Postgres + PostGIS (raw schema)
+                       Postgres (raw schema)
                               |
                               v
                     dbt (staging -> intermediate -> marts)
@@ -240,6 +240,13 @@ credential. Full citations, exact quotes, and what was and wasn't verified
 are in `VERIFIED_SOURCES.md` -- this section summarizes what each source is
 used for.
 
+**Precisely one GRID3 product is used**, and it is worth being exact about
+which: the LGA-level (admin-level-3) summary table from GRID3/WorldPop's
+"bottom-up gridded population estimates" release. GRID3 also publishes
+ward-level population and ward/settlement boundary layers -- this pipeline
+does not ingest, join against, or otherwise use any of that. Every "GRID3"
+reference elsewhere in this README means the one LGA-level population table.
+
 | Source | What it provides | Used for |
 |---|---|---|
 | [MSDAT](https://msdat.fmohconnect.gov.ng/) (Federal Ministry of Health, Nigeria) | LGA-level, annual NHMIS coverage-indicator values, 2015-2025, for all 34 Katsina LGAs | The `value` this pipeline checks for attrition and impossibility |
@@ -292,20 +299,50 @@ claimed as Katsina's own figures):
   magnitude as Gombe's documented under-reporting rate (referral facilities
   under-reported skilled-birth-attendant deliveries by more than 50%).
 
-**A finding worth being explicit about:** in a live run against Katsina's
-real data, most LGAs show completeness dropping by roughly 30-40% in the
-final year of the series (2025) relative to the year before -- but this
-happens almost everywhere, uniformly, not just in a toxic subset of LGAs. It
-is consistent with MSDAT's own disclosed ~2-month reporting lag (the most
-recent year in any live-pulled dataset will always look artificially
-incomplete relative to fully-settled prior years). Because the thresholds
-above are calibrated to Gombe's actual severity magnitudes rather than any
-year-over-year change at all, this test correctly does **not** fire on that
-uniform, expected, already-disclosed platform characteristic -- it exists to
-catch an LGA-specific collapse in reporting, not the ordinary tail of a
-still-settling year. This is a deliberate design property, not a gap: a
-threshold that flagged every LGA for the disclosed lag would be noise, not
-signal.
+**The actual result, stated plainly: 0 of 34 LGAs currently trip this flag,
+at any year in 2015-2025 -- not a near-miss, a real gap.** Queried directly
+over every LGA-year in `int_lga_year_over_year` (374 LGA-year rows total,
+340 with a prior year to compare against):
+
+| | Katsina's observed range | Threshold | Margin |
+|---|---|---|---|
+| `completeness_fraction` | 0.375 (worst observed) to 0.833 (best), median 0.583 | flag if `< 0.33` | worst case is 0.045 (13.6% relative) above the floor |
+| `yoy_relative_drop` | -0.55 (an *increase*) to 0.40 (worst drop), median 0 | flag if `>= 0.50` | worst case is 0.10 (25% relative) below the threshold |
+
+Only 6 of 374 LGA-years fall within 10 percentage points of the completeness
+floor, and only 1 of 340 falls within 10 points of the drop threshold -- and
+none of those cross. This is a genuine finding, not an ambiguous one:
+**Katsina's LGA-level reporting, as MSDAT's public aggregate records it for
+2015-2025, did not show attrition anywhere near the severity Gombe's study
+documented.** That is worth taking at face value rather than reading as "the
+thresholds must be wrong": the two datasets measure different things (Gombe
+audited facility registers directly against DHIS2; this pipeline can only see
+what MSDAT's LGA-annual aggregate already reports) and a real gap between
+them is a legitimate result.
+
+A threshold grounded directly in Katsina's own observed distribution instead
+of Gombe's was considered, per the same logic already used for the
+biological-impossibility test's independent GRID3 denominator: e.g. flagging
+the bottom decile of `completeness_fraction` (empirically ~0.42 here) rather
+than the borrowed 0.33 floor. It was not adopted as the primary threshold --
+a distribution-relative cutoff would, by construction, always flag *some*
+LGAs regardless of whether Katsina's data is actually healthy or not (the
+bottom decile exists even in a dataset with no real problem), which trades
+away the one thing a literature-grounded absolute threshold has going for
+it: the ability to report zero findings and mean it. The Gombe-grounded
+threshold stays primary for that reason; the distribution above is the
+documentation the coordinator asked for so this isn't left ambiguous, and a
+future maintainer with a reason to prefer a relative threshold has the exact
+numbers needed to set one.
+
+Separately: most LGAs do show completeness dropping somewhat in the final
+year of the series (2025) relative to the year before, consistent with
+MSDAT's own disclosed ~2-month reporting lag (the most recent year in any
+live-pulled dataset will always look artificially less complete than
+fully-settled prior years) -- but as the table above shows, even that
+softening never approaches either threshold. A threshold that fired on this
+uniform, expected, already-disclosed platform characteristic would be noise,
+not signal; the current thresholds correctly don't.
 
 ### 2. Biological impossibility
 
@@ -321,23 +358,65 @@ quoted directly from MSDAT's own API response (`ingestion/config.py` and
 inferred or invented.
 
 For each such indicator/LGA/year: the eligible population is recomputed as
-`GRID3_population_estimate x population_fraction` -- **using GRID3's
-population figure, not MSDAT's own (undocumented) one** -- so the check is an
-external, independent test, not MSDAT re-checking its own arithmetic. A row
-is flagged `is_impossible` when MSDAT's reported coverage percentage, applied
-to that GRID3-derived eligible population, implies more people were served
-than the target group could physically contain (`value > 100%`). A stronger
-`is_extreme_impossible` flag fires when the implied headcount would exceed
-GRID3's **entire** LGA population, not just the documented target
-sub-group -- i.e. even the most generous possible misreading of the
-denominator still can't explain the number.
+`GRID3_population_q975 x population_fraction` -- **using GRID3's upper-bound
+population estimate (the 97.5th percentile of its uncertainty interval), not
+MSDAT's own (undocumented) population source and not even GRID3's own point
+estimate (`population_mean`, still carried as a column for reference)** --
+so the check is an external, independent test, not MSDAT re-checking its own
+arithmetic, and "impossible" means impossible even under the single most
+generous plausible population figure available, not just relative to a
+point estimate. A row is flagged `is_impossible` when MSDAT's reported
+coverage percentage, applied to that eligible population, implies more
+people were served than the target group could physically contain (`value >
+100%` -- algebraically this reduces to a pure percentage comparison and is
+actually independent of which population figure is plugged in, since the
+population term cancels; using `q975` changes the displayed
+`grid3_eligible_population`/`implied_headcount` context columns, not which
+rows get flagged). A stronger `is_extreme_impossible` flag fires when the
+implied headcount would exceed GRID3's **entire** upper-bound LGA
+population, not just the documented target sub-group -- i.e. even the most
+generous possible misreading of the denominator still can't explain the
+number; this too reduces to a pure ratio test (`value > 100% / population_fraction`)
+and is likewise unaffected by the choice between `mean` and `q975`.
+
+**Verified, not just assumed, that these are real MSDAT values and not a
+units bug in this pipeline.** The most extreme flagged values (Katsina LGA's
+own DPT3/Penta-3 coverage reaching five figures of percent in 2023, for
+example) were checked directly against MSDAT's raw API responses rather than
+taken on faith. That investigation surfaced something more specific than
+"the data is toxic": for a small number of LGA/indicator/year combinations
+(107 of 5,789, or 1.8% -- concentrated almost entirely in 2023, with a
+handful in 2024, i.e. a dateable MSDAT-side reprocessing incident, not
+scattered noise), MSDAT's own database holds **multiple, genuinely different
+recorded values** for the same LGA/indicator/year, each with its own
+`updated_at` timestamp -- e.g. Katsina LGA's 2023 DPT3/Penta-3 value exists
+in MSDAT's own database as 175.4, 39754, *and* 21054.6, updated at three
+different times. Network-inspecting MSDAT's own dashboard (the same
+technique used in the original auth investigation) showed its frontend
+independently queries `/api/data/?ordering=-updated_at&size=1` elsewhere on
+the page -- i.e. MSDAT's own convention for "which value is current" when
+more than one exists is "most recently updated wins," and by that
+convention the extreme figures (tens of thousands of percent) are the values
+MSDAT's own system currently treats as authoritative for that LGA/indicator/
+year, not values an older, saner-looking record would produce. This pipeline's
+staging layer (`stg_msdat_indicator_values.sql`) now applies that exact same
+"latest `updated_at` wins" rule when resolving which record represents a
+given LGA/indicator/year -- previously it deduplicated on this pipeline's
+own fetch time, which is non-deterministic when multiple MSDAT records get
+pulled in the same run. In short: this is a real, striking, citable
+data-quality finding about MSDAT's own database (itself now double
+motivation for why an independent, GRID3-anchored impossibility check has
+value), not an artifact of how this pipeline reads MSDAT's `value` field --
+every indicator in `IMPOSSIBILITY_INDICATORS` was confirmed to return a
+plain percentage, read identically and without any scaling or unit
+conversion, across every LGA and year.
 
 In a live run, this test found genuinely striking real findings -- e.g. one
 LGA's series includes a reported coverage value of several thousand percent
 for a single indicator in a single year. That is not a synthetic example
 constructed to make the pipeline look good; it is what MSDAT's own live data
-contains, and finding it deterministically -- without any LLM or subjective
-judgment -- is exactly what this constraint is for.
+contains (see above), and finding it deterministically -- without any LLM or
+subjective judgment -- is exactly what this constraint is for.
 
 ### The final ranked list
 
@@ -382,6 +461,24 @@ The report is written to `data_snapshots/toxicity_audit_report.html` and is a
 single self-contained file (inline CSS, no external requests, no JS
 framework) -- open it directly in a browser.
 
+## Why plain Postgres, not PostGIS
+
+The stack constraints name "PostgreSQL + PostGIS." This build runs plain
+`postgres:16`. Neither `ingestion/` nor `warehouse/dbt/` contains a single
+`ST_*` function call, geometry/geography column, or boundary join -- GRID3's
+population figures are consumed purely as numbers (an LGA name and a
+population estimate), never as geometries. Every LGA/ward boundary this
+pipeline could have joined against was left unused, on purpose (see "Fix the
+GRID3 ward/population baselines overclaim" thread in project history --
+GRID3 does publish boundary layers, this pipeline ingests none of them).
+Shipping PostGIS with no spatial query anywhere in the codebase would be
+exactly the kind of stack-completeness theater the project's own scope
+already rules out for Neo4j ("no genuine topology dependency in this
+architecture") -- the same reasoning applies here. If a future extension of
+this pipeline adds a genuine spatial join (e.g. ward-level disaggregation),
+switching back to `postgis/postgis` is a one-line change in
+`docker-compose.yml`.
+
 ---
 
 ## Accountable Autonomy level
@@ -393,9 +490,18 @@ framework) -- open it directly in a browser.
   executes both checks every run and every violation is surfaced.
 - But the pipeline's own authority stops at **flagging**. Nothing is
   auto-corrected, no record is deleted, no funding or programmatic decision
-  is triggered by a flag. A human data steward reviews the ranked list and
-  the full `toxicity_reasons` for each flagged LGA, and retains an override
-  window before anything downstream happens.
+  is triggered by a flag. What this pipeline actually builds is the
+  detection and surfacing step: every flag, with its full `toxicity_reasons`
+  and underlying numbers, lands in a queryable table
+  (`dbt_marts.lga_data_toxicity_audit`) and the static HTML report, for a
+  human data steward to review. A reviewed/dismissed state, an override
+  action, and any API or UI surface for acting on a flag are **not built** --
+  they are the intended next stage of this design, not a mechanism this
+  repo implements. Being explicit about that boundary is itself part of
+  operating honestly at this autonomy level: the autonomy claim here is
+  about what the pipeline is *authorized* to do on its own (flag,
+  nothing more), not a claim that a review workflow already exists around
+  it.
 - **Why this level and not another, tied to consequence severity and
   reversibility:**
   - Not **Full Automation**: a flag here could plausibly feed into a
@@ -564,7 +670,17 @@ airflow/dags/        The on-demand DAG (schedule=None) wiring the above
 
 viz/generate_report.py  Renders the ranked audit list as a static HTML file.
 
-docker-compose.yml    Two services (Postgres+PostGIS, Airflow standalone) plus
+tests/                Python-level safeguards that don't belong in dbt.
+  test_indicator_reference_sync.py  Asserts warehouse/dbt/seeds/indicator_reference.csv
+                                     agrees exactly with ingestion/config.py's
+                                     REPORTING_BASKET_INDICATORS / IMPOSSIBILITY_INDICATORS
+                                     (membership, population fractions, denominator
+                                     text, names) -- config.py drives ingestion, the
+                                     seed drives the dbt join, and nothing else keeps
+                                     the two in sync. Run: `pytest tests/` or
+                                     `python -m tests.test_indicator_reference_sync`.
+
+docker-compose.yml    Two services (Postgres, Airflow standalone) plus
                        a one-off `pipeline` runner profile for manual CLI use.
 docker/               Dockerfiles for the two runtime images above.
 
@@ -574,4 +690,15 @@ data_snapshots/       Where live-pulled CSV snapshots and the rendered HTML
 
 VERIFIED_SOURCES.md   The full evidence trail for every cited number and every
                       resolved (or still-open) investigation question.
+```
+
+## Quality gates
+
+```bash
+pip install -e ".[dev]"
+mypy --strict ingestion viz tests   # strict on this project's own logic (see pyproject.toml
+                                     # for why the Airflow DAG file is scoped out)
+ruff check ingestion viz tests
+pytest tests/                       # config.py <-> seed CSV sync check
+# dbt test is run as part of the pipeline itself -- see Quickstart.
 ```

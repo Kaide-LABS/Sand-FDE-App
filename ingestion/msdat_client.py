@@ -71,12 +71,24 @@ class MsdatClient:
         last_error: Exception | None = None
         for attempt in range(1, _RETRY_ATTEMPTS + 1):
             token = self._ensure_token()
-            resp = self._session.get(
-                f"{self._base_url}{path}",
-                headers={"x-frontend-jwt": f"Token {token}", "accept": "application/json"},
-                params=params,
-                timeout=_REQUEST_TIMEOUT_SECONDS,
-            )
+            try:
+                resp = self._session.get(
+                    f"{self._base_url}{path}",
+                    headers={"x-frontend-jwt": f"Token {token}", "accept": "application/json"},
+                    params=params,
+                    timeout=_REQUEST_TIMEOUT_SECONDS,
+                )
+            except requests.exceptions.RequestException as exc:
+                # Connection-level failures (dropped connection, timeout, DNS
+                # blip) never reach the status-code checks below at all --
+                # without this, a single transient network hiccup against a
+                # live external API killed the whole fetch with zero retries,
+                # which is exactly the kind of flakiness a paced, polite
+                # anonymous client against a real government platform should
+                # expect and absorb rather than propagate.
+                last_error = MsdatApiError(f"Connection error calling MSDAT on {path}: {exc}")
+                time.sleep(_RETRY_BACKOFF_SECONDS * attempt)
+                continue
             if resp.status_code == 401:
                 # Token expired mid-run; force a refresh and retry.
                 self._token = None

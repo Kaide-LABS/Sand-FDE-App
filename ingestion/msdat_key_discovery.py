@@ -55,8 +55,21 @@ _memory_cache: MsdatFrontendKey | None = None
 
 
 def _candidate_script_urls(session: requests.Session, homepage_url: str) -> list[str]:
-    resp = session.get(homepage_url, timeout=_REQUEST_TIMEOUT_SECONDS)
-    resp.raise_for_status()
+    last_error: Exception | None = None
+    resp = None
+    for attempt in range(1, 3 + 1):
+        try:
+            resp = session.get(homepage_url, timeout=_REQUEST_TIMEOUT_SECONDS)
+            resp.raise_for_status()
+            break
+        except requests.exceptions.RequestException as exc:
+            last_error = exc
+            resp = None
+            time.sleep(2.0 * attempt)
+    if resp is None:
+        raise RuntimeError(
+            f"Could not fetch MSDAT homepage at {homepage_url} after 3 attempts: {last_error}"
+        )
     paths = list(dict.fromkeys(_SCRIPT_URL_RE.findall(resp.text)))  # de-dupe, keep order
     # The key pair has always been found in the main "app.<hash>.js" bundle
     # (confirmed during the original investigation); try it first, but keep

@@ -19,6 +19,9 @@ import re
 import sys
 from datetime import UTC, datetime
 
+from ingestion import config
+from ingestion.load_csv import load_typed_rows
+from ingestion.models import LgaCurrentStaffing
 from viz.generate_report import (
     COVERED_LGAS,
     EXCLUDED_LGA,
@@ -80,8 +83,34 @@ def test_guzamala_exclusion_named_explicitly() -> None:
     assert "absent from Table 1" in visible
 
 
+def test_covered_lgas_matches_the_checked_in_csv_exactly() -> None:
+    """`viz.generate_report.COVERED_LGAS` is a hardcoded tuple, kept fixed
+    on purpose so the coverage-disclosure section can always render even in
+    a degenerate run (see that module's own comment) -- but nothing
+    previously checked that this fixed list still matches the actual LGA
+    names in data/lga_current_staffing.csv. A future edit to that CSV
+    (renaming an LGA, e.g.) could pass tests/test_csv_sums.py (which only
+    checks row count and column sums) while silently desyncing
+    COVERED_LGAS from the real data rendered in the "Full allocation" table
+    right below it. This is the same "editing one without the other fails
+    loudly" discipline optimizer/models.py already applies to
+    ingestion.config.PHASE_1_CADRES, applied here to the LGA name list too.
+    """
+    rows = load_typed_rows(config.LGA_CURRENT_STAFFING_CSV, LgaCurrentStaffing)
+    csv_lgas = {r.lga for r in rows}
+    assert set(COVERED_LGAS) == csv_lgas, (
+        "viz.generate_report.COVERED_LGAS has drifted from data/lga_current_staffing.csv's "
+        f"own LGA names. In COVERED_LGAS but not the CSV: {sorted(set(COVERED_LGAS) - csv_lgas)}. "
+        f"In the CSV but not COVERED_LGAS: {sorted(csv_lgas - set(COVERED_LGAS))}."
+    )
+
+
 def main() -> int:
-    tests = [test_all_26_covered_lgas_named_in_report, test_guzamala_exclusion_named_explicitly]
+    tests = [
+        test_all_26_covered_lgas_named_in_report,
+        test_guzamala_exclusion_named_explicitly,
+        test_covered_lgas_matches_the_checked_in_csv_exactly,
+    ]
     failures = 0
     for test in tests:
         try:

@@ -10,6 +10,11 @@ seed-paths: ["seeds"]
 macro-paths: ["macros"]
 
 
+# Deliberately no target-path/log-path keys here (dbt-core deprecated setting them via
+# dbt_project.yml -- CLONE_TEST_FINDINGS.md C1). Both are set via the DBT_TARGET_PATH/
+# DBT_LOG_PATH environment variables instead (docker/Dockerfile.pipeline, and the Airflow
+# DAG's own DBT_ENV), which dbt-core reads natively -- same effect, no deprecation warning.
+#
 # Written to container-local scratch paths, not the bind-mounted project
 # directory, on purpose: dbt runs from two different container images in this
 # project (the "pipeline" one-off runner and the Airflow image), which don't
@@ -19,8 +24,6 @@ macro-paths: ["macros"]
 # Neither directory needs to be shared or persisted -- they're build
 # artifacts -- so keeping them container-local sidesteps the problem
 # entirely instead of trying to reconcile UIDs across images.
-target-path: "{{ env_var('DBT_TARGET_PATH', 'target') }}"
-log-path: "{{ env_var('DBT_LOG_PATH', 'logs') }}"
 clean-targets:
   - "target"
   - "dbt_packages"

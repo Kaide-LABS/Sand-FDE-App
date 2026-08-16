@@ -1,0 +1,10 @@
+# Normalize line endings to LF for every tracked text file, regardless of what line ending
+# the authoring machine's git config produces on checkout (CLONE_TEST_FINDINGS.md F2 -- this
+# repo was authored on Windows and every tracked source file had CRLF endings, a real
+# portability/diff-noise signal for a Linux/macOS reviewer). Binary files are left untouched.
+* text=auto eol=lf
+
+*.pdf -text
+*.png -text
+*.jpg -text
+*.jpeg -text

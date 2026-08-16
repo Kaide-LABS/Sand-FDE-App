@@ -27,11 +27,62 @@ than silently assumed. See AUTONOMOUS CRITIQUE.
 
 from __future__ import annotations
 
+import contextlib
+import ctypes
+import os
+import sys
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 from scipy.optimize import milp
 
 from optimizer.formulate import MilpProblem
+
+
+def _flush_native_stdio() -> None:
+    """Flushes the C runtime's own stdio buffers (not Python's `sys.stdout`).
+
+    Needed because HiGHS's trace lines go through `printf`-family C stdio, which is
+    fully buffered (not line-buffered) whenever fd 1 isn't a real terminal -- true for
+    both `docker compose run` and pytest's capture. Those writes sit in libc's internal
+    buffer and are only flushed by the C runtime's own atexit handler, which fires
+    *after* `_suppress_native_stdout` has already restored the real fd 1 -- so
+    redirecting the fd alone does not stop them, it only delays them to process exit
+    (confirmed live: noise appeared, unsuppressed, immediately after the redirected
+    block's own "done" marker printed -- CLONE_TEST_FINDINGS.md F3). Calling
+    `fflush(NULL)` while fd 1 is still pointed at devnull drains that buffer into
+    devnull for real, before the fd is restored.
+    """
+    libc = ctypes.cdll.msvcrt if sys.platform == "win32" else ctypes.CDLL(None)
+    libc.fflush(None)
+
+
+@contextlib.contextmanager
+def _suppress_native_stdout() -> Iterator[None]:
+    """Silences writes to OS file descriptor 1 (stdout) for the duration of the block.
+
+    `contextlib.redirect_stdout` only rebinds Python's `sys.stdout` object -- it has no
+    effect on a compiled C/C++ extension (HiGHS, scipy's MILP backend here) that writes
+    directly to the process's real stdout file descriptor, which is exactly what leaks the
+    solver's internal trace lines (e.g. its symmetry-detection orbitope log, see the module
+    docstring) straight to the terminal regardless of any Python-level redirection
+    (CLONE_TEST_FINDINGS.md F3 -- confirmed live: `contextlib.redirect_stdout` alone did not
+    suppress this). Duplicating and restoring the real fd catches output a native extension
+    writes below the Python layer, but is not by itself sufficient -- see
+    `_flush_native_stdio`, called here before the fd is restored, for why.
+    """
+    stdout_fd = 1
+    saved_fd = os.dup(stdout_fd)
+    devnull_fd = os.open(os.devnull, os.O_WRONLY)
+    try:
+        os.dup2(devnull_fd, stdout_fd)
+        yield
+    finally:
+        _flush_native_stdio()
+        os.dup2(saved_fd, stdout_fd)
+        os.close(devnull_fd)
+        os.close(saved_fd)
+
 
 # Disclosed MIP relative-gap tolerance and wall-clock safety net -- see the
 # module docstring above for the measured rationale. 2% was chosen as the
@@ -88,13 +139,24 @@ def solve(problem: MilpProblem) -> SolveResult:
     `integrality=1` on every x variable, so a failure here indicates a
     solver or formulation bug, never a data problem.
     """
-    result = milp(
-        c=problem.c,
-        constraints=problem.constraint,
-        integrality=problem.integrality,
-        bounds=problem.bounds,
-        options={"time_limit": TIME_LIMIT_SECONDS, "mip_rel_gap": MIP_REL_GAP},
-    )
+    # See _suppress_native_stdout's own docstring: HiGHS writes internal trace/debug lines
+    # directly to the OS stdout file descriptor, independent of scipy's own `disp` option and
+    # unreachable by `contextlib.redirect_stdout` -- CLONE_TEST_FINDINGS.md F3, confirmed live
+    # on a fresh clone. `disp: False` is passed for the documented, scipy-level behavior it
+    # does control; the fd-level suppression below is what actually guarantees no
+    # solver-internal noise reaches the terminal.
+    with _suppress_native_stdout():
+        result = milp(
+            c=problem.c,
+            constraints=problem.constraint,
+            integrality=problem.integrality,
+            bounds=problem.bounds,
+            options={
+                "time_limit": TIME_LIMIT_SECONDS,
+                "mip_rel_gap": MIP_REL_GAP,
+                "disp": False,
+            },
+        )
 
     status_label = _STATUS_LABELS.get(int(result.status), f"unknown_status_{result.status}")
 

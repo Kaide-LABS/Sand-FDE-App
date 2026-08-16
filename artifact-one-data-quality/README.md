@@ -41,7 +41,7 @@ Ministry credentials, no account of any kind, no API keys.
 
 ```bash
 git clone <this repo>
-cd sand-fde-application/artifact-one-data-quality
+cd <cloned-directory>/artifact-one-data-quality
 
 # 1. Start the warehouse (Postgres) and Airflow (standalone mode).
 docker compose up -d postgres

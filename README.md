@@ -14,9 +14,9 @@ They are deliberately sequential, not two unrelated demos:
   citable problems in the data itself (reporting attrition, biologically impossible coverage
   values) without touching what any of it means for care delivery.
 - **Artifact Two** assumes data that has cleared that bar and asks the next question: *given
-  trustworthy data, what physical, real-world action does it justify?* It targets a different
-  documented operational bottleneck in the Nigerian health system and produces a specific,
-  actionable recommendation rather than another dashboard.
+  trustworthy data, what physical, real-world action does it justify?* It targets Borno State's
+  primary-healthcare workforce maldistribution and produces a specific, checkable staff-reallocation
+  proposal -- zero-sum, zero new hires -- rather than another dashboard.
 
 Read that as the throughline: trust the data first, then use it to make something happen.
 
@@ -25,7 +25,7 @@ Read that as the throughline: trust the data first, then use it to make somethin
 | | What it does | Status |
 |---|---|---|
 | [`artifact-one-data-quality/`](artifact-one-data-quality/) | Ranks Katsina State's 34 LGAs by how untrustworthy their reported health data is, and says exactly why -- reporting attrition, biologically impossible coverage values -- against live-pulled MSDAT and GRID3 data. Not a health-metrics dashboard: it never displays or ranks a health outcome, only the reliability of the reporting itself. | Built, verified, running |
-| `artifact-two-*/` | Targets a second, distinct operational bottleneck (human-resource maldistribution, referral-network fragmentation, or access-vs-utilization mismatch -- final pick and directory name TBD) and models the physical intervention it justifies. | Spec/build in progress |
+| [`artifact-two-hr-reallocation/`](artifact-two-hr-reallocation/) | Reads Borno State's own published PHC worker-headcount audit and proposes a specific, mathematically optimal set of staff transfers between LGAs -- zero-sum, no new hires -- to reduce staffing imbalance. Independently re-verifies the source PDF against the research brief that proposed it and found real discrepancies (a wrong staffing-gap figure, a missing LGA) before building on it. | Built, verified, running |
 
 Each artifact directory is self-contained: its own README with a Quickstart, its own
 `docker-compose.yml`, its own dependency list, its own `.gitignore` for its own build artifacts.

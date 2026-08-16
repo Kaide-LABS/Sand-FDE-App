@@ -134,7 +134,7 @@ every input is a checked-in CSV under `data/`.
 
 ```bash
 git clone <this repo>
-cd sand-fde-application/artifact-two-hr-reallocation
+cd <cloned-directory>/artifact-two-hr-reallocation
 
 # 1. Start Postgres and Airflow (standalone mode).
 docker compose up -d postgres

@@ -18,6 +18,13 @@ dev = [
     "pytest>=8.0",
 ]
 
+[tool.setuptools]
+# Without this, `pip install -e ".[dev]"` fails: setuptools' flat-layout auto-discovery
+# finds every top-level directory (docker/, airflow/, warehouse/, data_snapshots/, ...) as a
+# candidate package and refuses to guess which ones are real (CLONE_TEST_FINDINGS.md B3).
+# ingestion/ and viz/ are the only two actual importable packages this project has.
+packages = ["ingestion", "viz"]
+
 [tool.mypy]
 python_version = "3.11"
 strict = true

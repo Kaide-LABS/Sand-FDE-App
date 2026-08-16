@@ -16,6 +16,14 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["mypy>=1.9", "ruff>=0.4", "pytest>=8.0"]
 
+[tool.setuptools]
+# Without this, `pip install -e ".[dev]"` fails: setuptools' flat-layout auto-discovery finds
+# every top-level directory (docker/, airflow/, warehouse/, data/, data_snapshots/, reference/,
+# ...) as a candidate package and refuses to guess which ones are real -- same root cause as
+# artifact-one-data-quality's identical bug, CLONE_TEST_FINDINGS.md B3. ingestion/, optimizer/,
+# and viz/ are the only three actual importable packages this project has.
+packages = ["ingestion", "optimizer", "viz"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true

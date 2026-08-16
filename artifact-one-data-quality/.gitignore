@@ -1,0 +1,12 @@
+dbt/target/
+dbt/logs/
+warehouse/dbt/target/
+warehouse/dbt/logs/
+warehouse/dbt/dbt_packages/
+warehouse/dbt/.user.yml
+airflow/logs/
+airflow/airflow.db
+airflow/airflow.cfg
+airflow/webserver_config.py
+data_snapshots/*
+!data_snapshots/.gitkeep

@@ -1,0 +1,33 @@
+# Source: Borno State PHC Workers Baseline Report (Feb 2025), Figure 2 (bar chart), p.14.
+# https://hopegov.pfm.bo.gov.ng/wp-content/uploads/2025/03/Borno_State_Report_of_PHC_Workers_Baseline_Mapping_Exercise.pdf
+# CAUTION: read from a chart image, not an extractable text table -- same caveat as
+# lga_facility_count.csv. Units: facilities per 10,000 population. 26 rows -- Guzamala absent.
+# Used with lga_facility_count.csv to derive an LGA population proxy (ULTIMATE_PRD.md Sec.3.2):
+#   LGA_population[k] ~= facility_count[k] / density_per_10k[k] * 10,000
+lga,density_per_10k_population
+SHANI,5.23
+BAYO,2.54
+HAWUL,2.40
+CHIBOK,2.21
+KWAYA KUSAR,1.72
+KONDUGA,1.68
+ASKIRA/UBA,1.47
+MONGUNO,1.17
+GWOZA,0.77
+JERE,0.72
+DAMBOA,0.69
+DIKWA,0.60
+BAMA,0.50
+MAFA,0.48
+MAIDUGURI,0.47
+KAGA,0.44
+ABADAM,0.38
+MARTE,0.12
+MAGUMERI,0.32
+NGALA,0.29
+MOBBAR,0.22
+KUKAWA,0.20
+NGANZAI,0.17
+GUBIO,0.17
+BIU,0.08
+KALA/BALGE,0.08

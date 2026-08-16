@@ -8,6 +8,8 @@ venv/
 .pytest_cache/
 .claude/
 .loopr-state/
+Template_prompts/
 .DS_Store
 Thumbs.db
 node_modules/
+SAND APP/

@@ -1,0 +1,34 @@
+# Source: Borno State PHC Workers Baseline Report (Feb 2025), Figure 1 (bar chart), p.13.
+# https://hopegov.pfm.bo.gov.ng/wp-content/uploads/2025/03/Borno_State_Report_of_PHC_Workers_Baseline_Mapping_Exercise.pdf
+# CAUTION: read from a chart image, not an extractable text table -- pdfplumber confirms this
+# figure has no underlying text layer (unlike Tables 1/4/6, which are pdfplumber-verified exactly).
+# This is the single highest transcription-risk file in this dataset. 26 rows -- Guzamala absent
+# here too (consistent with Table 1). Sums to exactly 329, matching the PDF's own stated total
+# operational facility count -- a strong (though not conclusive) internal consistency check.
+lga,facility_count
+SHANI,34
+MAIDUGURI,31
+ASKIRA/UBA,28
+BAYO,28
+KONDUGA,25
+HAWUL,24
+JERE,24
+KWAYA KUSAR,24
+CHIBOK,21
+MONGUNO,17
+BAMA,11
+GWOZA,11
+DAMBOA,10
+DIKWA,6
+KAGA,6
+MAFA,5
+MAGUMERI,4
+NGALA,4
+ABADAM,3
+GUBIO,3
+KUKAWA,3
+MOBBAR,2
+NGANZAI,2
+BIU,1
+KALA/BALGE,1
+MARTE,1

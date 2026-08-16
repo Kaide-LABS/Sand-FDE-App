@@ -1,0 +1,17 @@
+# Source: Borno State PHC Workers Baseline Report (Feb 2025), Table 6, p.26.
+# https://hopegov.pfm.bo.gov.ng/wp-content/uploads/2025/03/Borno_State_Report_of_PHC_Workers_Baseline_Mapping_Exercise.pdf
+# Extracted verbatim via pdfplumber (exact text-layer table parse).
+# Documentation/context only. NOT used as this artifact's optimizer floor -- see ULTIMATE_PRD.md
+# Sec.6.3: the floor is this artifact's own, disclosed, artifact-imposed safety constraint (>=1 per
+# cadre per LGA if currently >=1), not a claim of meeting this NPHCDA standard.
+minimum_standard,minimum_no_per_phc
+Medical Officer (If Available),1
+Community Health Officer,1
+Nurse/Midwife,4
+CHEW,3
+JCHEW,6
+Pharmacy Technician,1
+Environmental Officer,1
+Medical records officer,1
+Laboratory Technician,1
+"Support Staff (Health Assistant/Attendant (2), Security (2), General Maintenance Staff (1))",5

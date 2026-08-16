@@ -1,0 +1,35 @@
+# Source: Borno State PHC Workers Baseline Report (Feb 2025), Table 1, pp.21-22.
+# https://hopegov.pfm.bo.gov.ng/wp-content/uploads/2025/03/Borno_State_Report_of_PHC_Workers_Baseline_Mapping_Exercise.pdf
+# Extracted verbatim via pdfplumber (exact text-layer table parse, cross-checked against an
+# independent vision-based read of the same page -- both agree cell-for-cell).
+# 26 rows, not 27: Guzamala LGA is entirely absent from this table in the source document itself
+# (see ULTIMATE_PRD.md Sec.2 finding 9). Row values sum to 3,915; the PDF's own stated Grand Total
+# is 3,916 -- a 1-worker discrepancy in the primary source, not introduced by this extraction.
+# Do not add a Guzamala row or "fix" the sum -- both are genuine properties of the source.
+lga,community_health_officer,community_health_extension_worker,junior_community_health_extension_worker,health_information_management,medical_doctor,medical_laboratory_scientist,nurse_midwife,pharmacist,total_core_health_workers,total_support_health_workers,grand_total
+ABADAM,2,4,5,0,0,0,0,0,11,13,24
+ASKIRA/UBA,2,109,62,3,0,3,17,0,196,247,443
+BAMA,0,8,57,1,1,0,9,0,76,149,225
+BAYO,7,42,36,5,0,0,1,0,91,87,178
+BIU,0,5,4,0,0,0,2,0,11,34,45
+CHIBOK,1,13,2,1,0,0,3,0,20,124,144
+DAMBOA,2,23,8,0,0,0,9,1,43,181,224
+DIKWA,3,22,12,2,0,0,2,0,41,58,99
+GUBIO,4,41,20,2,0,0,12,0,79,77,156
+GWOZA,2,25,46,3,0,0,2,0,78,120,198
+HAWUL,1,28,18,0,0,0,0,0,47,97,144
+JERE,12,70,47,12,1,0,26,0,168,240,408
+KAGA,1,20,8,0,0,0,8,0,37,184,221
+KALA/BALGE,0,3,0,0,0,0,0,0,3,1,4
+KONDUGA,2,24,12,3,0,0,2,0,43,69,112
+KUKAWA,1,15,12,0,1,0,6,0,35,101,136
+KWAYA KUSAR,6,56,39,0,1,0,10,0,112,154,266
+MAFA,3,7,10,1,0,0,0,0,21,32,53
+MAGUMERI,0,9,23,0,0,0,2,0,34,51,85
+MAIDUGURI,6,84,63,8,0,0,11,0,172,359,531
+MARTE,2,4,5,0,0,0,0,0,11,12,23
+MOBBAR,0,1,0,0,0,0,0,0,1,24,25
+MONGUNO,1,3,6,0,0,0,0,0,10,26,36
+NGALA,0,1,0,0,0,0,0,0,1,77,78
+NGANZAI,0,6,2,0,0,0,0,0,8,7,15
+SHANI,0,11,9,0,0,0,0,0,20,22,42

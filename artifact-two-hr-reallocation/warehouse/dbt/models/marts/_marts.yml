@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: mart_reallocation_input
+    description: >
+      THE optimizer's input table (optimizer/formulate.py reads this
+      directly). One row per LGA covered by PDF Table 1 -- exactly 26 rows.
+      A row count other than 26 means stg_lga_current_staffing and
+      stg_lga_population_proxy disagree on LGA coverage, which should not
+      happen given both trace to the same 26-LGA set (ULTIMATE_PRD.md
+      Sec.2 finding 9) -- the row-count test below exists to catch that
+      silently drifting.
+    columns:
+      - name: lga
+        tests:
+          - unique
+          - not_null
+      - name: grand_total
+        tests:
+          - not_null
+      - name: population_proxy
+        tests:
+          - not_null
+      - name: ratio
+        tests:
+          - not_null

@@ -1,0 +1,35 @@
+# Airflow image with this project's ingestion/optimizer/dbt dependencies
+# installed, so DAG tasks (PythonOperator / BashOperator) can import
+# `ingestion.*` / `optimizer.*` / `viz.*` and shell out to `dbt` directly,
+# with no extra containers to orchestrate.
+#
+# apache/airflow:2.9.3-python3.12, not -python3.11: stays on the same 2.x
+# Airflow line ../artifact-one-data-quality/docker/Dockerfile.airflow pins
+# (2.9.3) -- a deliberate consistency choice with the sibling project
+# (ULTIMATE_PRD.md Sec.7), not staleness -- but the -python3.12 build variant
+# is required because scipy>=1.18,<2.0 (ULTIMATE_PRD.md Sec.4) needs Python
+# 3.12-3.14. Both apache/airflow:2.9.3-python3.12 and
+# apache/airflow:2.9.3-python3.11 are published tags for the same Airflow
+# 2.9.3 release; only the Python minor version differs.
+FROM apache/airflow:2.9.3-python3.12
+
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        gcc \
+        libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+USER airflow
+
+RUN pip install --no-cache-dir \
+        "pydantic>=2.6" \
+        "psycopg[binary]>=3.1" \
+        "scipy>=1.18,<2.0" \
+        "dbt-postgres>=1.7,<1.8"
+
+ENV PYTHONPATH=/opt/airflow/project
+ENV DBT_PROJECT_DIR=/opt/airflow/project/warehouse/dbt
+ENV DBT_PROFILES_DIR=/opt/airflow/project/warehouse/dbt
+# Container-local, not under the bind-mounted project dir -- see the comment
+# in warehouse/dbt/dbt_project.yml for why.
+ENV DBT_TARGET_PATH=/tmp/dbt_target
+ENV DBT_LOG_PATH=/tmp/dbt_logs

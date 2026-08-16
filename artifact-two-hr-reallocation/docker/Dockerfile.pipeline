@@ -1,0 +1,45 @@
+# Runtime image for the ingestion + dbt + optimizer + viz layers, used both
+# standalone (docker compose run pipeline ...) and as the executor image
+# Airflow's tasks run in. python:3.12-slim, not 3.11 (matching
+# ../artifact-one-data-quality/docker/Dockerfile.pipeline's base image
+# otherwise) -- scipy>=1.18,<2.0 (ULTIMATE_PRD.md Sec.4's pinned solver
+# dependency) requires Python 3.12-3.14; this is a required consequence of
+# that pin, not a drift from the sibling project's own conventions.
+FROM python:3.12-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        gcc \
+        libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/pipeline
+
+COPY pyproject.toml /opt/pipeline/
+RUN pip install --no-cache-dir "pydantic>=2.6" "psycopg[binary]>=3.1" "scipy>=1.18,<2.0" "dbt-postgres>=1.7,<1.8"
+
+COPY ingestion /opt/pipeline/ingestion
+COPY optimizer /opt/pipeline/optimizer
+COPY warehouse /opt/pipeline/warehouse
+COPY viz /opt/pipeline/viz
+COPY data /opt/pipeline/data
+
+# Same UID the official Airflow image's "airflow" user runs as. Both this
+# image and Dockerfile.airflow write to the same bind-mounted host
+# directories (warehouse/, data_snapshots/) at runtime; if they ran as
+# different UIDs, whichever container touched a file first would leave it
+# owned by a UID the other container's non-root user can't write to. Running
+# both as UID 50000 sidesteps that instead of chasing it file by file --
+# matches ../artifact-one-data-quality/docker/Dockerfile.pipeline exactly.
+RUN useradd --uid 50000 --gid 0 --no-create-home --shell /usr/sbin/nologin pipeline \
+    && chown -R 50000:0 /opt/pipeline
+USER 50000
+
+ENV PYTHONPATH=/opt/pipeline
+ENV DBT_PROJECT_DIR=/opt/pipeline/warehouse/dbt
+ENV DBT_PROFILES_DIR=/opt/pipeline/warehouse/dbt
+# Container-local, not under the bind-mounted project dir -- see the comment
+# in warehouse/dbt/dbt_project.yml for why.
+ENV DBT_TARGET_PATH=/tmp/dbt_target
+ENV DBT_LOG_PATH=/tmp/dbt_logs
+
+CMD ["python", "-m", "ingestion.load_csv"]

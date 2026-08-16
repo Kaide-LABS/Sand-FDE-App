@@ -1,0 +1,67 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: lga_current_staffing
+        description: >
+          PDF Table 1 (p.21-22): current PHC worker headcount by LGA and
+          cadre. 26 rows -- Guzamala is absent from the source table itself
+          (ULTIMATE_PRD.md Sec.2 finding 9). Populated by
+          ingestion/load_csv.py from data/lga_current_staffing.csv.
+      - name: state_staffing_gap
+        description: >
+          PDF Table 4 (p.25): state-level staffing gap by professional
+          area. Cross-check only, no per-LGA grain. Populated by
+          ingestion/load_csv.py from data/state_staffing_gap.csv.
+      - name: lga_facility_count
+        description: >
+          PDF Figure 1 (p.13, bar chart): facility count per LGA. Read from
+          a chart image, not an extractable text table -- highest
+          transcription-risk file in this dataset. Populated by
+          ingestion/load_csv.py from data/lga_facility_count.csv.
+      - name: lga_facility_density
+        description: >
+          PDF Figure 2 (p.14, bar chart): facility density per 10,000
+          population per LGA. Same chart-image transcription-risk caveat as
+          lga_facility_count. Populated by ingestion/load_csv.py from
+          data/lga_facility_density.csv.
+      - name: nphcda_minimum_standard
+        description: >
+          PDF Table 6 (p.26): NPHCDA's minimum staffing standard per PHC.
+          Documentation/context only. Populated by ingestion/load_csv.py
+          from data/nphcda_minimum_standard.csv.
+
+models:
+  - name: stg_lga_current_staffing
+    description: Thin pass-through of raw.lga_current_staffing.
+    columns:
+      - name: lga
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_state_staffing_gap
+    description: Thin pass-through of raw.state_staffing_gap.
+    columns:
+      - name: phc_personnel
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_lga_population_proxy
+    description: >
+      Derived LGA population proxy (ULTIMATE_PRD.md Sec.3.2). Reconciliation
+      against the PDF's own stated state-level figures is a singular test
+      (warehouse/dbt/tests/population_proxy_reconciliation.sql), not a
+      column-level test here, since it checks an aggregate, not a per-row
+      property.
+    columns:
+      - name: lga
+        tests:
+          - unique
+          - not_null
+      - name: population_proxy
+        tests:
+          - not_null

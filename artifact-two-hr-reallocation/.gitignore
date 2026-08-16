@@ -1,0 +1,17 @@
+# Project-specific -- mirrors artifact-one-data-quality's split between the
+# repo-root .gitignore (generic Python/OS noise, already covers __pycache__,
+# .venv, .mypy_cache, etc.) and this file (this project's own generated
+# artifacts: dbt build output, Airflow's local metadata DB, and dated
+# snapshot files that should never be checked in, while the directory
+# structure itself -- and any genuinely checked-in seed content -- stays
+# tracked via the .gitkeep exception below).
+warehouse/dbt/target/
+warehouse/dbt/logs/
+warehouse/dbt/dbt_packages/
+warehouse/dbt/.user.yml
+airflow/logs/
+airflow/airflow.db
+airflow/airflow.cfg
+airflow/webserver_config.py
+data_snapshots/*
+!data_snapshots/.gitkeep

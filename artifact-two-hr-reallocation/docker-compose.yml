@@ -1,0 +1,98 @@
+# Local-only stack. Nothing here is exposed beyond localhost and nothing runs
+# on a schedule -- the Airflow DAG is triggered by hand (see ULTIMATE_PRD.md
+# Sec.7). Two services only: the warehouse (plain Postgres) and Airflow
+# itself, run in `airflow standalone` mode (SQLite metadata DB,
+# SequentialExecutor) so there is no Celery/Redis/multi-worker machinery to
+# stand up for a single on-demand DAG. Mirrors
+# ../artifact-one-data-quality/docker-compose.yml's own shape exactly, ports
+# shifted so both stacks can run side by side.
+#
+# Plain postgres:16, not postgis/postgis: this architecture has no genuine
+# spatial component (no ST_* functions, geometry/geography columns, or
+# boundary joins anywhere in ingestion/, warehouse/dbt/, or optimizer/ --
+# ULTIMATE_PRD.md Sec.3.3). Shipping PostGIS would imply spatial capability
+# this pipeline doesn't exercise, exactly the stack-completeness-for-its-own-
+# sake ../artifact-one-data-quality/README.md's "Why plain Postgres, not
+# PostGIS" section already rules out for the sibling project.
+#
+# No credentials of any kind beyond these fixed, non-secret local-development
+# values -- there is no hosted deployment for this artifact, and these are
+# the same class of plaintext local-only credential
+# ../artifact-one-data-quality/docker-compose.yml already documents for its
+# own Postgres service.
+services:
+  postgres:
+    image: postgres:16
+    container_name: borno_postgres
+    environment:
+      POSTGRES_USER: borno
+      POSTGRES_PASSWORD: borno
+      POSTGRES_DB: borno_hr_reallocation
+    ports:
+      - "5443:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U borno -d borno_hr_reallocation"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # One-off runner for ingestion scripts / dbt / the optimizer / the viz
+  # generator, used both for manual `docker compose run --rm pipeline ...`
+  # invocations and as the image the Airflow DAG's tasks are documented
+  # against. Not started by `docker compose up` -- it has no long-running
+  # process.
+  pipeline:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.pipeline
+    container_name: borno_pipeline
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://borno:borno@postgres:5432/borno_hr_reallocation
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGUSER: borno
+      PGPASSWORD: borno
+      PGDATABASE: borno_hr_reallocation
+    volumes:
+      - ./ingestion:/opt/pipeline/ingestion
+      - ./optimizer:/opt/pipeline/optimizer
+      - ./warehouse:/opt/pipeline/warehouse
+      - ./viz:/opt/pipeline/viz
+      - ./data:/opt/pipeline/data
+      - ./data_snapshots:/opt/pipeline/data_snapshots
+    profiles: ["tools"]
+
+  airflow:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.airflow
+    container_name: borno_airflow
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      AIRFLOW_HOME: /opt/airflow
+      DATABASE_URL: postgresql://borno:borno@postgres:5432/borno_hr_reallocation
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./ingestion:/opt/airflow/project/ingestion
+      - ./optimizer:/opt/airflow/project/optimizer
+      - ./warehouse:/opt/airflow/project/warehouse
+      - ./viz:/opt/airflow/project/viz
+      - ./data:/opt/airflow/project/data
+      - ./data_snapshots:/opt/airflow/project/data_snapshots
+      - airflow_home:/opt/airflow
+    command: standalone
+
+volumes:
+  pgdata:
+  airflow_home:

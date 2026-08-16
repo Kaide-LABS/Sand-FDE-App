@@ -1,0 +1,12 @@
+borno_hr_reallocation:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('PGHOST', 'localhost') }}"
+      port: "{{ env_var('PGPORT', '5443') | as_number }}"
+      user: "{{ env_var('PGUSER', 'borno') }}"
+      password: "{{ env_var('PGPASSWORD', 'borno') }}"
+      dbname: "{{ env_var('PGDATABASE', 'borno_hr_reallocation') }}"
+      schema: dbt
+      threads: 4

@@ -1,0 +1,35 @@
+name: "borno_hr_reallocation"
+version: "1.0.0"
+config-version: 2
+
+profile: "borno_hr_reallocation"
+
+model-paths: ["models"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+# Written to container-local scratch paths, not the bind-mounted project
+# directory, on purpose: dbt runs from two different container images in
+# this project (the "pipeline" one-off runner and the Airflow image), which
+# don't share a UID. If target/logs lived under the bind mount, whichever
+# container touched them first would leave them owned by its own UID, and
+# the other container would then fail with a permission error trying to
+# write there. Neither directory needs to be shared or persisted -- they're
+# build artifacts -- so keeping them container-local sidesteps the problem
+# entirely instead of trying to reconcile UIDs across images. Matches
+# ../artifact-one-data-quality/warehouse/dbt/dbt_project.yml exactly.
+target-path: "{{ env_var('DBT_TARGET_PATH', 'target') }}"
+log-path: "{{ env_var('DBT_LOG_PATH', 'logs') }}"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  borno_hr_reallocation:
+    staging:
+      +schema: staging
+      +materialized: view
+    marts:
+      +schema: marts
+      +materialized: table

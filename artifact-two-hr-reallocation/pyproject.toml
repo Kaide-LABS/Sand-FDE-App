@@ -1,0 +1,48 @@
+[project]
+name = "borno-hr-reallocation"
+version = "0.1.0"
+description = "Deterministic MILP-based PHC worker reallocation optimizer for Borno State, Nigeria."
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "pydantic>=2.6",
+    "psycopg[binary]>=3.1",
+    "scipy>=1.18,<2.0",       # scipy.optimize.milp (HiGHS-backed). Requires Python 3.12-3.14 and
+                               # NumPy >=2.0.0 -- see docs/modernization_log.md for the full pin
+                               # rationale and citation (ULTIMATE_PRD.md Sec.4/Sec.7).
+    "dbt-postgres>=1.7,<1.8", # matches artifact-one-data-quality's pin -- disclosed consistency
+                               # choice, not staleness (ULTIMATE_PRD.md Sec.7).
+]
+
+[project.optional-dependencies]
+dev = ["mypy>=1.9", "ruff>=0.4", "pytest>=8.0"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+# Scoped to the packages that hold this project's actual logic and typed data
+# models (ingestion's Pydantic models + CSV loader, optimizer's MILP
+# formulation/solve/verify, viz's report renderer, tests). airflow/dags/ is
+# deliberately excluded, matching artifact-one-data-quality's own
+# pyproject.toml precedent exactly: it is thin orchestration glue, and
+# getting Airflow's own operator submodules to resolve cleanly under
+# mypy --strict requires pinning the exact provider packages that match the
+# Docker image's Airflow version purely for type-checking, which is more
+# machinery than the file's own content justifies. The functions the DAG
+# calls into (ingestion.load_csv.main, optimizer.main.main,
+# viz.generate_report.main) are themselves covered here.
+files = ["ingestion", "optimizer", "viz", "tests"]
+exclude = ["warehouse/dbt"]
+
+[[tool.mypy.overrides]]
+module = ["psycopg.*", "scipy.*"]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+# Excludes the confirmed, already-shipped step10 spec/PRD documents (and the
+# loopr tooling state dirs) -- ruff >=0.6 formats fenced ```python code
+# blocks inside Markdown files by default, and PHASE_1_SPEC.md /
+# ULTIMATE_PRD.md's illustrative code snippets are locked inputs to this
+# build, not source this phase owns or should reformat.
+extend-exclude = ["*.md", ".loopr-state", ".claude"]

@@ -9,6 +9,7 @@ venv/
 .claude/
 .loopr-state/
 Template_prompts/
+COMPREHENSION.md
 .DS_Store
 Thumbs.db
 node_modules/

@@ -387,8 +387,9 @@ facility-level transfers, the insecure-ward flag, and the two unconfirmed cadre-
 The full, confirmed acceptance criteria and scope edges from this project's own spec-confirmation
 process are in [`.claude/loopr/baby_prd.md`](.claude/loopr/baby_prd.md) (local-only, gitignored
 like Artifact One's own `.claude/loopr/` -- see that project's README for why); the architecture
-and every judgment call made while building it are in [`ULTIMATE_PRD.md`](ULTIMATE_PRD.md) and
-[`COMPREHENSION.md`](COMPREHENSION.md).
+and every judgment call made while building it are in [`ULTIMATE_PRD.md`](ULTIMATE_PRD.md). A
+plain-language comprehension pass written after the build is also gitignored, same reasoning as
+`baby_prd.md` -- ask if you'd like a copy.
 
 ---
 
@@ -413,8 +414,6 @@ docs/modernization_log.md  Pinned dependency versions and their citations.
 ULTIMATE_PRD.md        The full architecture, every primary-source verification finding, and
                         every disclosed judgment call made while building this.
 PHASE_1_SPEC.md          The file-by-file blueprint this codebase was built from.
-COMPREHENSION.md          A plain-language walkthrough and honesty audit, written after the
-                          build, grounded in a fresh read of the actual shipped code.
 BUILD_COMPLETE.md          Final acceptance-suite results, actually run and captured, not
                             summarized from memory.
 ```

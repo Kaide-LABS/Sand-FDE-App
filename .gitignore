@@ -10,6 +10,7 @@ venv/
 .loopr-state/
 Template_prompts/
 COMPREHENSION.md
+CLONE_TEST_FINDINGS.md
 .DS_Store
 Thumbs.db
 node_modules/

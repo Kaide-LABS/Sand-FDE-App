@@ -354,8 +354,9 @@ boundaries](#scope-boundaries) for the full, authoritative list):**
 
 ## Acceptance-criteria verification checklist
 
-Every item below is independently checkable by a stranger -- confirmed via a full cold-clone test,
-see `../CLONE_TEST_FINDINGS.md`, not taken on faith.
+Every item below is independently checkable by a stranger -- confirmed via a full cold-clone test
+(gitignored write-up, not part of the shipped repo -- ask if you'd like a copy), not taken on
+faith.
 
 1. **Every proposed transfer traces to a real row in `data/lga_current_staffing.csv`.** Checked by
    `tests/test_zero_sum.py`, `tests/test_floor_constraint.py`, and independently by

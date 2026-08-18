@@ -88,13 +88,27 @@ def write_snapshot_csv(records: list[Grid3LgaPopulation]) -> Path:
     with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv_module.writer(f)
         writer.writerow(
-            ["state", "lga_name", "population_mean", "population_q025", "population_q975",
-             "source_label", "fetched_at"]
+            [
+                "state",
+                "lga_name",
+                "population_mean",
+                "population_q025",
+                "population_q975",
+                "source_label",
+                "fetched_at",
+            ]
         )
         for r in records:
             writer.writerow(
-                [r.state, r.lga_name, r.population_mean, r.population_q025,
-                 r.population_q975, r.source_label, r.fetched_at.isoformat()]
+                [
+                    r.state,
+                    r.lga_name,
+                    r.population_mean,
+                    r.population_q025,
+                    r.population_q975,
+                    r.source_label,
+                    r.fetched_at.isoformat(),
+                ]
             )
     return path
 
@@ -111,8 +125,15 @@ def write_to_postgres(records: list[Grid3LgaPopulation]) -> None:
                 ON CONFLICT (lga_name, fetched_at) DO NOTHING
                 """,
             [
-                (r.state, r.lga_name, r.population_mean, r.population_q025,
-                 r.population_q975, r.source_label, r.fetched_at)
+                (
+                    r.state,
+                    r.lga_name,
+                    r.population_mean,
+                    r.population_q025,
+                    r.population_q975,
+                    r.source_label,
+                    r.fetched_at,
+                )
                 for r in records
             ],
         )

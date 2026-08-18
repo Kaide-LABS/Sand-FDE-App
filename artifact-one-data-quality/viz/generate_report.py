@@ -25,7 +25,9 @@ from psycopg.rows import dict_row
 from pydantic import BaseModel, ConfigDict
 
 MARTS_SCHEMA = "dbt_marts"  # dbt: base schema "dbt" + custom schema "marts"
-REPORT_PATH = Path(__file__).resolve().parent.parent / "data_snapshots" / "toxicity_audit_report.html"
+REPORT_PATH = (
+    Path(__file__).resolve().parent.parent / "data_snapshots" / "toxicity_audit_report.html"
+)
 
 
 class ToxicityAuditRow(BaseModel):
@@ -104,9 +106,9 @@ def render_html(rows: list[ToxicityAuditRow]) -> str:
           <td>{"yes" if r.reporting_attrition_flag else "no"}</td>
           <td>{"yes" if r.biological_impossibility_flag else "no"}</td>
           <td class="num">{r.impossible_incident_count}</td>
-          <td class="num">{'' if r.completeness_fraction is None else f'{r.completeness_fraction * 100:.1f}%'}</td>
-          <td class="num">{'' if r.grid3_population_estimate is None else f'{r.grid3_population_estimate:,.0f}'}</td>
-          <td class="reasons">{html.escape(r.toxicity_reasons or '')}</td>
+          <td class="num">{"" if r.completeness_fraction is None else f"{r.completeness_fraction * 100:.1f}%"}</td>
+          <td class="num">{"" if r.grid3_population_estimate is None else f"{r.grid3_population_estimate:,.0f}"}</td>
+          <td class="reasons">{html.escape(r.toxicity_reasons or "")}</td>
         </tr>"""
         for i, r in enumerate(rows)
     )

@@ -46,9 +46,7 @@ _AUTH_RE = re.compile(r'VUE_APP_FRONTEND_AUTH"?\s*:\s*"([^"]+)"')
 # don't re-download MSDAT's ~1-5MB JS bundle every time. Lives under
 # data_snapshots/, which is entirely gitignored -- this file is never
 # tracked, regardless of what it contains.
-_CACHE_PATH = (
-    Path(__file__).resolve().parent.parent / "data_snapshots" / "_msdat_key_cache.json"
-)
+_CACHE_PATH = Path(__file__).resolve().parent.parent / "data_snapshots" / "_msdat_key_cache.json"
 _CACHE_TTL_SECONDS = 3600
 
 _memory_cache: MsdatFrontendKey | None = None

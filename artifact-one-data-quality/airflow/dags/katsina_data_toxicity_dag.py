@@ -18,11 +18,12 @@ from __future__ import annotations
 
 import os
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 
-from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
+
+from airflow import DAG
 
 PROJECT_ROOT = "/opt/airflow/project"
 DBT_DIR = f"{PROJECT_ROOT}/warehouse/dbt"
@@ -65,7 +66,7 @@ with DAG(
     dag_id="katsina_data_toxicity_audit",
     description="Deterministic LGA data-toxicity audit for Katsina State (on demand only).",
     schedule=None,
-    start_date=datetime(2026, 1, 1),
+    start_date=datetime(2026, 1, 1, tzinfo=UTC),
     catchup=False,
     tags=["katsina", "data-quality", "on-demand"],
 ) as dag:

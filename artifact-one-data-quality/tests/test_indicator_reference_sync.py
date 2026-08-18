@@ -85,9 +85,7 @@ def test_seed_impossibility_membership_and_fields_match_config() -> None:
 
 def test_seed_indicator_names_match_config() -> None:
     rows = _load_seed_rows()
-    config_names = {
-        indicator_id: name for indicator_id, name in REPORTING_BASKET_INDICATORS
-    }
+    config_names = {indicator_id: name for indicator_id, name in REPORTING_BASKET_INDICATORS}
     for row in rows:
         indicator_id = int(row["indicator_id"])
         if indicator_id not in config_names:

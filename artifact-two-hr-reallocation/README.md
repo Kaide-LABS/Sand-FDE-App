@@ -218,7 +218,8 @@ pass found real, citable discrepancies the brief could not have known about:
   appears -- never presented as if the PDF states it directly.
 
 The full, numbered account of every finding -- eleven of them, each with a page citation -- is in
-[`ULTIMATE_PRD.md`](ULTIMATE_PRD.md)'s MODERNIZATION CHANGELOG. This is the same discipline
+`ULTIMATE_PRD.md`'s MODERNIZATION CHANGELOG (an internal spec document, gitignored, not part of
+this repo -- ask if you'd like a copy). This is the same discipline
 [Artifact One](../artifact-one-data-quality/) already established: a number tracing to a real,
 cited source is not automatically correct, and this build's own research pipeline produced
 exactly this failure mode before, on the same underlying research brief.
@@ -386,11 +387,12 @@ one-time, static output from a checked-in extraction, not a continuously running
 facility-level transfers, the insecure-ward flag, and the two unconfirmed cadre-name mappings
 (all three named explicitly in [Honesty section](#honesty-section) above, not silently dropped).
 The full, confirmed acceptance criteria and scope edges from this project's own spec-confirmation
-process are in [`.claude/loopr/baby_prd.md`](.claude/loopr/baby_prd.md) (local-only, gitignored
-like Artifact One's own `.claude/loopr/` -- see that project's README for why); the architecture
-and every judgment call made while building it are in [`ULTIMATE_PRD.md`](ULTIMATE_PRD.md). A
-plain-language comprehension pass written after the build is also gitignored, same reasoning as
-`baby_prd.md` -- ask if you'd like a copy.
+process are in `.claude/loopr/baby_prd.md` (local-only, gitignored like Artifact One's own
+`.claude/loopr/` -- see that project's README for why); the architecture and every judgment call
+made while building it are in `ULTIMATE_PRD.md`, and the file-by-file blueprint this codebase was
+built from is in `PHASE_1_SPEC.md` -- both gitignored internal spec documents, same reasoning as
+`baby_prd.md`, not part of this repo. A plain-language comprehension pass written after the build
+is gitignored too. Ask if you'd like a copy of any of these.
 
 ---
 
@@ -412,9 +414,6 @@ data_snapshots/       Where the rendered report and dated CSV snapshots land whe
                       pipeline runs. Not checked in (regenerated fresh on every run).
 docs/modernization_log.md  Pinned dependency versions and their citations.
 
-ULTIMATE_PRD.md        The full architecture, every primary-source verification finding, and
-                        every disclosed judgment call made while building this.
-PHASE_1_SPEC.md          The file-by-file blueprint this codebase was built from.
 BUILD_COMPLETE.md          Final acceptance-suite results, actually run and captured, not
                             summarized from memory.
 ```

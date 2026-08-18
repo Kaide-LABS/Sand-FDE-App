@@ -11,6 +11,8 @@ venv/
 Template_prompts/
 COMPREHENSION.md
 CLONE_TEST_FINDINGS.md
+PHASE_1_SPEC.md
+ULTIMATE_PRD.md
 .DS_Store
 Thumbs.db
 node_modules/

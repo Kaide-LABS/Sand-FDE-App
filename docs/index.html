@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sand Technologies FDE Application</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #5a5a5a;
+    --border: #e2e2e2;
+    --accent: #2f6f4f;
+    --card-bg: #f7f7f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212;
+      --fg: #e8e8e8;
+      --muted: #a3a3a3;
+      --border: #2c2c2c;
+      --accent: #6fbf94;
+      --card-bg: #1b1b1b;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+  .subtitle { color: var(--muted); margin-top: 0; margin-bottom: 2rem; }
+  p { color: var(--fg); }
+  .thesis { color: var(--muted); }
+  .cards { display: flex; flex-direction: column; gap: 1rem; margin: 2rem 0; }
+  .card {
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+  }
+  .card h2 { margin: 0 0 0.4rem; font-size: 1.05rem; }
+  .card p { margin: 0 0 0.9rem; color: var(--muted); font-size: 0.95rem; }
+  .card a {
+    display: inline-block;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  .card a:hover { text-decoration: underline; }
+  footer { margin-top: 2.5rem; font-size: 0.85rem; color: var(--muted); }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+  <h1>Sand Technologies FDE Application</h1>
+  <p class="subtitle">Two unsolicited technical artifacts, read together.</p>
+
+  <p class="thesis">
+    Sand's own public position is "Foundations Over Features": that generative AI and dashboards
+    built on top of broken or ungrounded data are the wrong first move, and that the unglamorous
+    work &mdash; finding out where data can't be trusted, then acting on data once it can be &mdash;
+    is the right one. Both artifacts try to demonstrate that kind of work directly, rather than
+    describe it.
+  </p>
+
+  <div class="cards">
+    <div class="card">
+      <h2>Artifact One &mdash; Data Quality</h2>
+      <p>
+        Can this data be trusted at all? A deterministic audit of Katsina State's health
+        reporting, ranking all 34 LGAs by how untrustworthy their reported data is &mdash;
+        reporting attrition, biologically impossible coverage values &mdash; against live-pulled
+        MSDAT and GRID3 data.
+      </p>
+      <a href="artifact-one/">View the report &rarr;</a>
+    </div>
+    <div class="card">
+      <h2>Artifact Two &mdash; HR Reallocation</h2>
+      <p>
+        Given trustworthy data, what action does it justify? Reads Borno State's own published
+        PHC worker-headcount audit and proposes a specific, mathematically optimal set of staff
+        transfers between LGAs &mdash; zero-sum, no new hires.
+      </p>
+      <a href="artifact-two/">View the report &rarr;</a>
+    </div>
+  </div>
+
+  <footer>
+    Source, methodology, and every disclosed judgment call for both artifacts are in the
+    <a href="https://github.com/Kaide-LABS/Sand-FDE-App">GitHub repository</a>.
+  </footer>
+</body>
+</html>

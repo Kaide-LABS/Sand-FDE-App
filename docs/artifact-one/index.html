@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Katsina LGA Data-Toxicity Audit</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --border: #2a2f3a; --text: #e8eaed;
+    --muted: #9aa4b2; --accent: #e0763c; --accent-soft: #4a3226;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text); margin: 0; padding: 2.5rem 1.5rem;
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+  .subtitle { color: var(--muted); margin-bottom: 0.25rem; font-size: 0.95rem; }
+  .meta { color: var(--muted); font-size: 0.8rem; margin-bottom: 1.75rem; }
+  .panel {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;
+  }
+  .panel h2 { font-size: 1rem; margin: 0 0 1rem 0; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.04em; font-weight: 600; }
+  .bar-row { display: grid; grid-template-columns: 120px 1fr 32px; align-items: center; gap: 0.75rem;
+    margin-bottom: 0.4rem; font-size: 0.82rem; }
+  .bar-label { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { background: #23262f; border-radius: 4px; height: 12px; overflow: hidden; }
+  .bar-fill { background: var(--accent); height: 100%; border-radius: 4px; }
+  .bar-value { text-align: right; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 0.7rem;
+    letter-spacing: 0.03em; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.reasons { color: var(--muted); max-width: 320px; }
+  tr:hover td { background: #1c2028; }
+  .footnote { color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+  .badge { display: inline-block; background: var(--accent-soft); color: var(--accent);
+    border-radius: 4px; padding: 0.1rem 0.5rem; font-size: 0.75rem; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Katsina State LGA Data-Toxicity Audit</h1>
+  <div class="subtitle">Ranked by how little the underlying MSDAT reporting for each LGA can be
+    trusted -- not a health-outcomes dashboard.</div>
+  <div class="meta">Generated 2026-08-18 20:12 UTC &middot;
+    <span class="badge">34 / 34 LGAs flagged</span></div>
+
+  <div class="panel">
+    <h2>Toxicity score by LGA</h2>
+    
+        <div class="bar-row">
+          <div class="bar-label">Danja</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:100.0%"></div>
+          </div>
+          <div class="bar-value">67</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Bakori</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:85.1%"></div>
+          </div>
+          <div class="bar-value">57</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Funtua</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:73.1%"></div>
+          </div>
+          <div class="bar-value">49</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Dandume</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:70.1%"></div>
+          </div>
+          <div class="bar-value">47</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Malumfashi</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:67.2%"></div>
+          </div>
+          <div class="bar-value">45</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Dutsin Ma</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:65.7%"></div>
+          </div>
+          <div class="bar-value">44</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Kurfi</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:50.7%"></div>
+          </div>
+          <div class="bar-value">34</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Matazu</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:49.3%"></div>
+          </div>
+          <div class="bar-value">33</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Jibia</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:46.3%"></div>
+          </div>
+          <div class="bar-value">31</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Safana</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:41.8%"></div>
+          </div>
+          <div class="bar-value">28</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Dutsi</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:40.3%"></div>
+          </div>
+          <div class="bar-value">27</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Kafur</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:40.3%"></div>
+          </div>
+          <div class="bar-value">27</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Kusada</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:40.3%"></div>
+          </div>
+          <div class="bar-value">27</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Katsina</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:38.8%"></div>
+          </div>
+          <div class="bar-value">26</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Rimi</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:37.3%"></div>
+          </div>
+          <div class="bar-value">25</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Charanchi</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:35.8%"></div>
+          </div>
+          <div class="bar-value">24</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Dan Musa</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:34.3%"></div>
+          </div>
+          <div class="bar-value">23</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Batagarawa</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:32.8%"></div>
+          </div>
+          <div class="bar-value">22</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Faskari</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:32.8%"></div>
+          </div>
+          <div class="bar-value">22</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Kankia</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:32.8%"></div>
+          </div>
+          <div class="bar-value">22</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Kaita</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:29.9%"></div>
+          </div>
+          <div class="bar-value">20</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Mani</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:29.9%"></div>
+          </div>
+          <div class="bar-value">20</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Batsari</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:28.4%"></div>
+          </div>
+          <div class="bar-value">19</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Zango</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:28.4%"></div>
+          </div>
+          <div class="bar-value">19</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Daura</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:26.9%"></div>
+          </div>
+          <div class="bar-value">18</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Mashi</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:26.9%"></div>
+          </div>
+          <div class="bar-value">18</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Musawa</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:26.9%"></div>
+          </div>
+          <div class="bar-value">18</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Sandamu</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:26.9%"></div>
+          </div>
+          <div class="bar-value">18</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Sabuwa</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:25.4%"></div>
+          </div>
+          <div class="bar-value">17</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Bindawa</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:23.9%"></div>
+          </div>
+          <div class="bar-value">16</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Ingawa</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:22.4%"></div>
+          </div>
+          <div class="bar-value">15</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Mai&#x27;Adua</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:20.9%"></div>
+          </div>
+          <div class="bar-value">14</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Baure</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:19.4%"></div>
+          </div>
+          <div class="bar-value">13</div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Kankara</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:16.4%"></div>
+          </div>
+          <div class="bar-value">11</div>
+        </div>
+  </div>
+
+  <div class="panel">
+    <h2>Full audit list</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>LGA</th><th>Score</th><th>Attrition?</th><th>Impossible?</th>
+          <th>Impossible incidents</th><th>Latest completeness</th>
+          <th>GRID3 population</th><th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>1</td>
+          <td>Danja</td>
+          <td class="num">67</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">63</td>
+          <td class="num">54.2%</td>
+          <td class="num">193,836</td>
+          <td class="reasons">biological impossibility: 63 indicator-year(s) across 10 distinct indicator(s), max 8310.7% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>2</td>
+          <td>Bakori</td>
+          <td class="num">57</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">53</td>
+          <td class="num">58.3%</td>
+          <td class="num">343,485</td>
+          <td class="reasons">biological impossibility: 53 indicator-year(s) across 11 distinct indicator(s), max 9875.5% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>3</td>
+          <td>Funtua</td>
+          <td class="num">49</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">45</td>
+          <td class="num">58.3%</td>
+          <td class="num">390,558</td>
+          <td class="reasons">biological impossibility: 45 indicator-year(s) across 11 distinct indicator(s), max 14913.4% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>4</td>
+          <td>Dandume</td>
+          <td class="num">47</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">43</td>
+          <td class="num">58.3%</td>
+          <td class="num">195,180</td>
+          <td class="reasons">biological impossibility: 43 indicator-year(s) across 10 distinct indicator(s), max 9635.4% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>5</td>
+          <td>Malumfashi</td>
+          <td class="num">45</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">41</td>
+          <td class="num">58.3%</td>
+          <td class="num">380,846</td>
+          <td class="reasons">biological impossibility: 41 indicator-year(s) across 6 distinct indicator(s), max 12093.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>6</td>
+          <td>Dutsin Ma</td>
+          <td class="num">44</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">40</td>
+          <td class="num">58.3%</td>
+          <td class="num">306,902</td>
+          <td class="reasons">biological impossibility: 40 indicator-year(s) across 8 distinct indicator(s), max 11217.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>7</td>
+          <td>Kurfi</td>
+          <td class="num">34</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">30</td>
+          <td class="num">58.3%</td>
+          <td class="num">178,315</td>
+          <td class="reasons">biological impossibility: 30 indicator-year(s) across 9 distinct indicator(s), max 7773.7% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>8</td>
+          <td>Matazu</td>
+          <td class="num">33</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">29</td>
+          <td class="num">58.3%</td>
+          <td class="num">158,285</td>
+          <td class="reasons">biological impossibility: 29 indicator-year(s) across 9 distinct indicator(s), max 7624.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>9</td>
+          <td>Jibia</td>
+          <td class="num">31</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">27</td>
+          <td class="num">50.0%</td>
+          <td class="num">255,796</td>
+          <td class="reasons">biological impossibility: 27 indicator-year(s) across 7 distinct indicator(s), max 11222.7% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>10</td>
+          <td>Safana</td>
+          <td class="num">28</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">24</td>
+          <td class="num">54.2%</td>
+          <td class="num">233,431</td>
+          <td class="reasons">biological impossibility: 24 indicator-year(s) across 9 distinct indicator(s), max 12150.4% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>11</td>
+          <td>Dutsi</td>
+          <td class="num">27</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">23</td>
+          <td class="num">58.3%</td>
+          <td class="num">107,272</td>
+          <td class="reasons">biological impossibility: 23 indicator-year(s) across 5 distinct indicator(s), max 7935.2% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>12</td>
+          <td>Kafur</td>
+          <td class="num">27</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">23</td>
+          <td class="num">54.2%</td>
+          <td class="num">330,098</td>
+          <td class="reasons">biological impossibility: 23 indicator-year(s) across 6 distinct indicator(s), max 13413.4% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>13</td>
+          <td>Kusada</td>
+          <td class="num">27</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">23</td>
+          <td class="num">50.0%</td>
+          <td class="num">115,261</td>
+          <td class="reasons">biological impossibility: 23 indicator-year(s) across 6 distinct indicator(s), max 6562.9% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>14</td>
+          <td>Katsina</td>
+          <td class="num">26</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">22</td>
+          <td class="num">58.3%</td>
+          <td class="num">644,652</td>
+          <td class="reasons">biological impossibility: 22 indicator-year(s) across 6 distinct indicator(s), max 21054.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>15</td>
+          <td>Rimi</td>
+          <td class="num">25</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">21</td>
+          <td class="num">54.2%</td>
+          <td class="num">303,305</td>
+          <td class="reasons">biological impossibility: 21 indicator-year(s) across 9 distinct indicator(s), max 10164.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>16</td>
+          <td>Charanchi</td>
+          <td class="num">24</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">20</td>
+          <td class="num">58.3%</td>
+          <td class="num">217,790</td>
+          <td class="reasons">biological impossibility: 20 indicator-year(s) across 6 distinct indicator(s), max 9098.1% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>17</td>
+          <td>Dan Musa</td>
+          <td class="num">23</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">19</td>
+          <td class="num">54.2%</td>
+          <td class="num">208,162</td>
+          <td class="reasons">biological impossibility: 19 indicator-year(s) across 7 distinct indicator(s), max 7516.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>18</td>
+          <td>Batagarawa</td>
+          <td class="num">22</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">18</td>
+          <td class="num">58.3%</td>
+          <td class="num">282,858</td>
+          <td class="reasons">biological impossibility: 18 indicator-year(s) across 5 distinct indicator(s), max 12203% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>19</td>
+          <td>Faskari</td>
+          <td class="num">22</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">18</td>
+          <td class="num">58.3%</td>
+          <td class="num">284,888</td>
+          <td class="reasons">biological impossibility: 18 indicator-year(s) across 7 distinct indicator(s), max 12960.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>20</td>
+          <td>Kankia</td>
+          <td class="num">22</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">18</td>
+          <td class="num">58.3%</td>
+          <td class="num">200,213</td>
+          <td class="reasons">biological impossibility: 18 indicator-year(s) across 6 distinct indicator(s), max 10011.9% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>21</td>
+          <td>Kaita</td>
+          <td class="num">20</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">16</td>
+          <td class="num">50.0%</td>
+          <td class="num">252,804</td>
+          <td class="reasons">biological impossibility: 16 indicator-year(s) across 5 distinct indicator(s), max 12191.5% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>22</td>
+          <td>Mani</td>
+          <td class="num">20</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">16</td>
+          <td class="num">58.3%</td>
+          <td class="num">309,712</td>
+          <td class="reasons">biological impossibility: 16 indicator-year(s) across 6 distinct indicator(s), max 11699.9% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>23</td>
+          <td>Batsari</td>
+          <td class="num">19</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">15</td>
+          <td class="num">58.3%</td>
+          <td class="num">295,853</td>
+          <td class="reasons">biological impossibility: 15 indicator-year(s) across 5 distinct indicator(s), max 13816.4% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>24</td>
+          <td>Zango</td>
+          <td class="num">19</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">15</td>
+          <td class="num">58.3%</td>
+          <td class="num">164,025</td>
+          <td class="reasons">biological impossibility: 15 indicator-year(s) across 8 distinct indicator(s), max 10230.7% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>25</td>
+          <td>Daura</td>
+          <td class="num">18</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">14</td>
+          <td class="num">58.3%</td>
+          <td class="num">128,285</td>
+          <td class="reasons">biological impossibility: 14 indicator-year(s) across 5 distinct indicator(s), max 14526.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>26</td>
+          <td>Mashi</td>
+          <td class="num">18</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">14</td>
+          <td class="num">50.0%</td>
+          <td class="num">308,927</td>
+          <td class="reasons">biological impossibility: 14 indicator-year(s) across 5 distinct indicator(s), max 11446.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>27</td>
+          <td>Musawa</td>
+          <td class="num">18</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">14</td>
+          <td class="num">58.3%</td>
+          <td class="num">178,816</td>
+          <td class="reasons">biological impossibility: 14 indicator-year(s) across 4 distinct indicator(s), max 11352.7% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>28</td>
+          <td>Sandamu</td>
+          <td class="num">18</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">14</td>
+          <td class="num">58.3%</td>
+          <td class="num">103,431</td>
+          <td class="reasons">biological impossibility: 14 indicator-year(s) across 7 distinct indicator(s), max 9076.6% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>29</td>
+          <td>Sabuwa</td>
+          <td class="num">17</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">13</td>
+          <td class="num">50.0%</td>
+          <td class="num">146,364</td>
+          <td class="reasons">biological impossibility: 13 indicator-year(s) across 4 distinct indicator(s), max 8994.8% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>30</td>
+          <td>Bindawa</td>
+          <td class="num">16</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">12</td>
+          <td class="num">58.3%</td>
+          <td class="num">270,062</td>
+          <td class="reasons">biological impossibility: 12 indicator-year(s) across 4 distinct indicator(s), max 10072.8% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>31</td>
+          <td>Ingawa</td>
+          <td class="num">15</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">11</td>
+          <td class="num">58.3%</td>
+          <td class="num">208,269</td>
+          <td class="reasons">biological impossibility: 11 indicator-year(s) across 2 distinct indicator(s), max 11223% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>32</td>
+          <td>Mai&#x27;Adua</td>
+          <td class="num">14</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">10</td>
+          <td class="num">58.3%</td>
+          <td class="num">170,187</td>
+          <td class="reasons">biological impossibility: 10 indicator-year(s) across 2 distinct indicator(s), max 13300.7% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>33</td>
+          <td>Baure</td>
+          <td class="num">13</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">9</td>
+          <td class="num">54.2%</td>
+          <td class="num">282,913</td>
+          <td class="reasons">biological impossibility: 9 indicator-year(s) across 3 distinct indicator(s), max 13052.5% coverage (most recent: 2025)</td>
+        </tr>
+
+        <tr>
+          <td>34</td>
+          <td>Kankara</td>
+          <td class="num">11</td>
+          <td>no</td>
+          <td>yes</td>
+          <td class="num">7</td>
+          <td class="num">58.3%</td>
+          <td class="num">353,637</td>
+          <td class="reasons">biological impossibility: 7 indicator-year(s) across 2 distinct indicator(s), max 16246.8% coverage (most recent: 2025)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="footnote">
+    toxicity_score = 3 &times; reporting_attrition_flag + impossible_incident_count
+    + 2 &times; extreme_impossible_incident_count. Reporting-volume attrition and
+    biological-impossibility thresholds, and their sourcing (Gombe State DHIS2 study;
+    GRID3/WorldPop population baselines; MSDAT's own indicator-denominator metadata),
+    are documented in warehouse/dbt/models/marts/ and README.md. This report reflects
+    whatever MSDAT and GRID3 returned at the moment the pipeline was last run.
+  </p>
+</div>
+</body>
+</html>

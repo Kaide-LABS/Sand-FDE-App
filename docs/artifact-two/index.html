@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Borno State PHC Worker Reallocation -- Transfer Proposal</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --border: #2a2f3a; --text: #e8eaed;
+    --muted: #9aa4b2; --accent: #3c8ce0; --accent-soft: #1e3350;
+    --warn: #e0a83c; --warn-soft: #4a3a1e; --ok: #3ce07a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text); margin: 0; padding: 2.5rem 1.5rem;
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+  h2 { font-size: 1rem; margin: 0 0 1rem 0; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 0.04em; font-weight: 600; }
+  .subtitle { color: var(--muted); margin-bottom: 0.25rem; font-size: 0.95rem; }
+  .meta { color: var(--muted); font-size: 0.8rem; margin-bottom: 1.75rem; }
+  .panel {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;
+  }
+  .panel.unimplemented { border-color: var(--warn); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 0.7rem;
+    letter-spacing: 0.03em; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.empty { color: var(--muted); text-align: center; padding: 1rem; }
+  tr:hover td { background: #1c2028; }
+  p { line-height: 1.55; font-size: 0.88rem; color: var(--text); }
+  p.callout { background: var(--accent-soft); border-left: 3px solid var(--accent);
+    padding: 0.75rem 1rem; border-radius: 4px; }
+  p.warn { background: var(--warn-soft); border-left: 3px solid var(--warn);
+    padding: 0.75rem 1rem; border-radius: 4px; }
+  .variance-row { display: flex; gap: 2rem; align-items: baseline; margin-bottom: 0.75rem; }
+  .variance-value { font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+  .variance-label { color: var(--muted); font-size: 0.8rem; }
+  .arrow { color: var(--muted); font-size: 1.2rem; }
+  .badge { display: inline-block; border-radius: 4px; padding: 0.1rem 0.5rem;
+    font-size: 0.75rem; font-weight: 600; }
+  .badge.ok { background: #1e4a30; color: var(--ok); }
+  .badge.warn { background: var(--warn-soft); color: var(--warn); }
+  .footnote { color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Borno State PHC Worker Reallocation -- Transfer Proposal</h1>
+  <div class="subtitle">A draft offered for review, not a prescription -- Human-in-the-Loop
+    (ULTIMATE_PRD.md Sec.9). A human SPHCDB HR Director reviews and executes; this table does
+    not.</div>
+  <div class="meta">Report generated 2026-08-18 20:14 UTC from optimizer run
+    2026-08-18 20:14 UTC &middot;
+    <span class="badge ok">
+      solver status: optimal_within_2pct_gap</span></div>
+
+  <div class="panel">
+    <h2>Before / after staff-to-population ratio variance</h2>
+    <div class="variance-row">
+      <div><div class="variance-value">3.5100867e-07</div>
+        <div class="variance-label">before</div></div>
+      <div class="arrow">&rarr;</div>
+      <div><div class="variance-value">2.535746e-08</div>
+        <div class="variance-label">after</div></div>
+      <div><span class="badge ok">
+        improved</span></div>
+    </div>
+    <p class="footnote">Population variance of `grand_total / population_proxy` across all 26
+      covered LGAs, computed independently in optimizer/verify.py from the transfer list itself
+      -- not read back from the solver's own objective. The solver's own objective minimizes a
+      <em>linear</em> sum-of-absolute-deviations proxy (a genuine linear quantity in the decision
+      variables); this variance is the <em>quadratic</em> statistic the acceptance criteria
+      actually require, computed post-hoc so a reviewer can reproduce it with a spreadsheet
+      (ULTIMATE_PRD.md Sec.4). A reviewer can recompute both numbers directly from the "Full
+      allocation" table below. The solver itself is run with a disclosed 2% relative MIP-gap
+      tolerance and a time limit (optimizer/solve.py) rather than an unbounded search for exact
+      global optimality -- the actual problem size exhibits real solution symmetry (many
+      differently-routed transfer sets achieve the identical net effect per LGA), which made
+      proving a strict 0%-gap optimum take minutes without converging in testing, while a
+      solution proven within 2% of optimal is found in seconds. Every check on this page
+      (zero-sum, the per-cadre floor, and variance strictly improving) holds for the solution
+      actually returned regardless of this tolerance; "solver status" above states this
+      explicitly rather than reading as an unconditional optimality claim.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Proposed transfers (70)</h2>
+    <table>
+      <thead><tr><th>Cadre</th><th>From LGA</th><th>To LGA</th><th>Headcount</th></tr></thead>
+      <tbody>
+        
+        <tr>
+          <td>nurse_midwife</td>
+          <td>ASKIRA/UBA</td>
+          <td>GWOZA</td>
+          <td class="num">10</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>ASKIRA/UBA</td>
+          <td>KALA/BALGE</td>
+          <td class="num">10</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>ASKIRA/UBA</td>
+          <td>KONDUGA</td>
+          <td class="num">5</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>ASKIRA/UBA</td>
+          <td>MAGUMERI</td>
+          <td class="num">37</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>ASKIRA/UBA</td>
+          <td>MARTE</td>
+          <td class="num">65</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>ASKIRA/UBA</td>
+          <td>MARTE</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>ASKIRA/UBA</td>
+          <td>MOBBAR</td>
+          <td class="num">42</td>
+        </tr>
+
+        <tr>
+          <td>community_health_officer</td>
+          <td>ASKIRA/UBA</td>
+          <td>MONGUNO</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>ASKIRA/UBA</td>
+          <td>NGALA</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>ASKIRA/UBA</td>
+          <td>SHANI</td>
+          <td class="num">14</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>BAMA</td>
+          <td>JERE</td>
+          <td class="num">6</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>BAMA</td>
+          <td>KUKAWA</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>BAMA</td>
+          <td>NGANZAI</td>
+          <td class="num">39</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>BAMA</td>
+          <td>SHANI</td>
+          <td class="num">8</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>BAYO</td>
+          <td>BAMA</td>
+          <td class="num">41</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>BAYO</td>
+          <td>KALA/BALGE</td>
+          <td class="num">33</td>
+        </tr>
+
+        <tr>
+          <td>community_health_officer</td>
+          <td>BAYO</td>
+          <td>KUKAWA</td>
+          <td class="num">6</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>CHIBOK</td>
+          <td>KALA/BALGE</td>
+          <td class="num">12</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>CHIBOK</td>
+          <td>NGALA</td>
+          <td class="num">2</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>CHIBOK</td>
+          <td>NGANZAI</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>community_health_officer</td>
+          <td>DAMBOA</td>
+          <td>BIU</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>DAMBOA</td>
+          <td>KALA/BALGE</td>
+          <td class="num">22</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>DAMBOA</td>
+          <td>MONGUNO</td>
+          <td class="num">7</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>DAMBOA</td>
+          <td>MONGUNO</td>
+          <td class="num">8</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>DIKWA</td>
+          <td>GUBIO</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>community_health_officer</td>
+          <td>DIKWA</td>
+          <td>MOBBAR</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>GUBIO</td>
+          <td>BIU</td>
+          <td class="num">19</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>GWOZA</td>
+          <td>BIU</td>
+          <td class="num">23</td>
+        </tr>
+
+        <tr>
+          <td>community_health_officer</td>
+          <td>GWOZA</td>
+          <td>MAFA</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>GWOZA</td>
+          <td>MAFA</td>
+          <td class="num">45</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>GWOZA</td>
+          <td>MONGUNO</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>HAWUL</td>
+          <td>KONDUGA</td>
+          <td class="num">24</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>HAWUL</td>
+          <td>KONDUGA</td>
+          <td class="num">17</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>HAWUL</td>
+          <td>KUKAWA</td>
+          <td class="num">3</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>JERE</td>
+          <td>BIU</td>
+          <td class="num">18</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>JERE</td>
+          <td>KALA/BALGE</td>
+          <td class="num">7</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>JERE</td>
+          <td>KUKAWA</td>
+          <td class="num">2</td>
+        </tr>
+
+        <tr>
+          <td>community_health_officer</td>
+          <td>JERE</td>
+          <td>MONGUNO</td>
+          <td class="num">11</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>JERE</td>
+          <td>MONGUNO</td>
+          <td class="num">31</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>JERE</td>
+          <td>NGALA</td>
+          <td class="num">12</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>JERE</td>
+          <td>NGANZAI</td>
+          <td class="num">10</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>KAGA</td>
+          <td>ABADAM</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>KAGA</td>
+          <td>KUKAWA</td>
+          <td class="num">7</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>KAGA</td>
+          <td>KUKAWA</td>
+          <td class="num">7</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>KAGA</td>
+          <td>NGANZAI</td>
+          <td class="num">18</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>KONDUGA</td>
+          <td>BIU</td>
+          <td class="num">11</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>KONDUGA</td>
+          <td>NGANZAI</td>
+          <td class="num">3</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>KUKAWA</td>
+          <td>ABADAM</td>
+          <td class="num">14</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>KUKAWA</td>
+          <td>MONGUNO</td>
+          <td class="num">5</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>KWAYA KUSAR</td>
+          <td>BAYO</td>
+          <td class="num">9</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>KWAYA KUSAR</td>
+          <td>GUBIO</td>
+          <td class="num">28</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>KWAYA KUSAR</td>
+          <td>MAFA</td>
+          <td class="num">2</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>KWAYA KUSAR</td>
+          <td>MAIDUGURI</td>
+          <td class="num">27</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>KWAYA KUSAR</td>
+          <td>MOBBAR</td>
+          <td class="num">9</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>KWAYA KUSAR</td>
+          <td>MOBBAR</td>
+          <td class="num">11</td>
+        </tr>
+
+        <tr>
+          <td>community_health_officer</td>
+          <td>KWAYA KUSAR</td>
+          <td>MONGUNO</td>
+          <td class="num">5</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>KWAYA KUSAR</td>
+          <td>NGANZAI</td>
+          <td class="num">16</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>MAGUMERI</td>
+          <td>BAMA</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>MAIDUGURI</td>
+          <td>ABADAM</td>
+          <td class="num">37</td>
+        </tr>
+
+        <tr>
+          <td>community_health_officer</td>
+          <td>MAIDUGURI</td>
+          <td>GUBIO</td>
+          <td class="num">5</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>MAIDUGURI</td>
+          <td>KALA/BALGE</td>
+          <td class="num">33</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>MAIDUGURI</td>
+          <td>KUKAWA</td>
+          <td class="num">2</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>MAIDUGURI</td>
+          <td>MONGUNO</td>
+          <td class="num">36</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>MAIDUGURI</td>
+          <td>NGALA</td>
+          <td class="num">29</td>
+        </tr>
+
+        <tr>
+          <td>nurse_midwife</td>
+          <td>MAIDUGURI</td>
+          <td>NGALA</td>
+          <td class="num">10</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>MAIDUGURI</td>
+          <td>NGANZAI</td>
+          <td class="num">8</td>
+        </tr>
+
+        <tr>
+          <td>junior_community_health_extension_worker</td>
+          <td>MARTE</td>
+          <td>BIU</td>
+          <td class="num">4</td>
+        </tr>
+
+        <tr>
+          <td>community_health_officer</td>
+          <td>MARTE</td>
+          <td>MAIDUGURI</td>
+          <td class="num">1</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>MARTE</td>
+          <td>NGANZAI</td>
+          <td class="num">3</td>
+        </tr>
+
+        <tr>
+          <td>community_health_extension_worker</td>
+          <td>SHANI</td>
+          <td>NGALA</td>
+          <td class="num">1</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">Payroll is provably zero-sum: sum every headcount column above by
+      cadre-from and by cadre-to and they match exactly -- checkable with a spreadsheet SUM, no
+      domain knowledge required (ULTIMATE_PRD.md Sec.4). This is true by construction of the
+      optimizer's decision variables, independently re-verified in optimizer/verify.py.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Full allocation, all 26 covered LGAs</h2>
+    <table>
+      <thead>
+        <tr><th>LGA</th><th>Grand total before</th><th>Grand total after</th>
+          <th>Population proxy</th><th>Ratio before</th><th>Ratio after</th></tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>ABADAM</td>
+          <td class="num">24</td>
+          <td class="num">76</td>
+          <td class="num">78,947</td>
+          <td class="num">0.000304</td>
+          <td class="num">0.000963</td>
+        </tr>
+
+        <tr>
+          <td>ASKIRA/UBA</td>
+          <td class="num">443</td>
+          <td class="num">257</td>
+          <td class="num">190,476</td>
+          <td class="num">0.002326</td>
+          <td class="num">0.001349</td>
+        </tr>
+
+        <tr>
+          <td>BAMA</td>
+          <td class="num">225</td>
+          <td class="num">213</td>
+          <td class="num">220,000</td>
+          <td class="num">0.001023</td>
+          <td class="num">0.000968</td>
+        </tr>
+
+        <tr>
+          <td>BAYO</td>
+          <td class="num">178</td>
+          <td class="num">107</td>
+          <td class="num">110,236</td>
+          <td class="num">0.001615</td>
+          <td class="num">0.000971</td>
+        </tr>
+
+        <tr>
+          <td>BIU</td>
+          <td class="num">45</td>
+          <td class="num">121</td>
+          <td class="num">125,000</td>
+          <td class="num">0.000360</td>
+          <td class="num">0.000968</td>
+        </tr>
+
+        <tr>
+          <td>CHIBOK</td>
+          <td class="num">144</td>
+          <td class="num">129</td>
+          <td class="num">95,023</td>
+          <td class="num">0.001515</td>
+          <td class="num">0.001358</td>
+        </tr>
+
+        <tr>
+          <td>DAMBOA</td>
+          <td class="num">224</td>
+          <td class="num">186</td>
+          <td class="num">144,928</td>
+          <td class="num">0.001546</td>
+          <td class="num">0.001283</td>
+        </tr>
+
+        <tr>
+          <td>DIKWA</td>
+          <td class="num">99</td>
+          <td class="num">97</td>
+          <td class="num">100,000</td>
+          <td class="num">0.000990</td>
+          <td class="num">0.000970</td>
+        </tr>
+
+        <tr>
+          <td>GUBIO</td>
+          <td class="num">156</td>
+          <td class="num">171</td>
+          <td class="num">176,471</td>
+          <td class="num">0.000884</td>
+          <td class="num">0.000969</td>
+        </tr>
+
+        <tr>
+          <td>GWOZA</td>
+          <td class="num">198</td>
+          <td class="num">138</td>
+          <td class="num">142,857</td>
+          <td class="num">0.001386</td>
+          <td class="num">0.000966</td>
+        </tr>
+
+        <tr>
+          <td>HAWUL</td>
+          <td class="num">144</td>
+          <td class="num">100</td>
+          <td class="num">100,000</td>
+          <td class="num">0.001440</td>
+          <td class="num">0.001000</td>
+        </tr>
+
+        <tr>
+          <td>JERE</td>
+          <td class="num">408</td>
+          <td class="num">323</td>
+          <td class="num">333,333</td>
+          <td class="num">0.001224</td>
+          <td class="num">0.000969</td>
+        </tr>
+
+        <tr>
+          <td>KAGA</td>
+          <td class="num">221</td>
+          <td class="num">188</td>
+          <td class="num">136,364</td>
+          <td class="num">0.001621</td>
+          <td class="num">0.001379</td>
+        </tr>
+
+        <tr>
+          <td>KALA/BALGE</td>
+          <td class="num">4</td>
+          <td class="num">121</td>
+          <td class="num">125,000</td>
+          <td class="num">0.000032</td>
+          <td class="num">0.000968</td>
+        </tr>
+
+        <tr>
+          <td>KONDUGA</td>
+          <td class="num">112</td>
+          <td class="num">144</td>
+          <td class="num">148,810</td>
+          <td class="num">0.000753</td>
+          <td class="num">0.000968</td>
+        </tr>
+
+        <tr>
+          <td>KUKAWA</td>
+          <td class="num">136</td>
+          <td class="num">145</td>
+          <td class="num">150,000</td>
+          <td class="num">0.000907</td>
+          <td class="num">0.000967</td>
+        </tr>
+
+        <tr>
+          <td>KWAYA KUSAR</td>
+          <td class="num">266</td>
+          <td class="num">159</td>
+          <td class="num">139,535</td>
+          <td class="num">0.001906</td>
+          <td class="num">0.001140</td>
+        </tr>
+
+        <tr>
+          <td>MAFA</td>
+          <td class="num">53</td>
+          <td class="num">101</td>
+          <td class="num">104,167</td>
+          <td class="num">0.000509</td>
+          <td class="num">0.000970</td>
+        </tr>
+
+        <tr>
+          <td>MAGUMERI</td>
+          <td class="num">85</td>
+          <td class="num">121</td>
+          <td class="num">125,000</td>
+          <td class="num">0.000680</td>
+          <td class="num">0.000968</td>
+        </tr>
+
+        <tr>
+          <td>MAIDUGURI</td>
+          <td class="num">531</td>
+          <td class="num">399</td>
+          <td class="num">659,574</td>
+          <td class="num">0.000805</td>
+          <td class="num">0.000605</td>
+        </tr>
+
+        <tr>
+          <td>MARTE</td>
+          <td class="num">23</td>
+          <td class="num">81</td>
+          <td class="num">83,333</td>
+          <td class="num">0.000276</td>
+          <td class="num">0.000972</td>
+        </tr>
+
+        <tr>
+          <td>MOBBAR</td>
+          <td class="num">25</td>
+          <td class="num">88</td>
+          <td class="num">90,909</td>
+          <td class="num">0.000275</td>
+          <td class="num">0.000968</td>
+        </tr>
+
+        <tr>
+          <td>MONGUNO</td>
+          <td class="num">36</td>
+          <td class="num">141</td>
+          <td class="num">145,299</td>
+          <td class="num">0.000248</td>
+          <td class="num">0.000970</td>
+        </tr>
+
+        <tr>
+          <td>NGALA</td>
+          <td class="num">78</td>
+          <td class="num">133</td>
+          <td class="num">137,931</td>
+          <td class="num">0.000565</td>
+          <td class="num">0.000964</td>
+        </tr>
+
+        <tr>
+          <td>NGANZAI</td>
+          <td class="num">15</td>
+          <td class="num">113</td>
+          <td class="num">117,647</td>
+          <td class="num">0.000128</td>
+          <td class="num">0.000961</td>
+        </tr>
+
+        <tr>
+          <td>SHANI</td>
+          <td class="num">42</td>
+          <td class="num">63</td>
+          <td class="num">65,010</td>
+          <td class="num">0.000646</td>
+          <td class="num">0.000969</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">Population proxy is <strong>derived from PDF Fig. 1 & Fig. 2, not
+      directly reported</strong> (ULTIMATE_PRD.md Sec.3.2) -- no ward- or LGA-level population
+      figure appears anywhere in the source document.</p>
+  </div>
+
+  <div class="panel">
+    <h2>LGA coverage -- which 26, and why not 27</h2>
+    
+    <p>This optimizer covers exactly the <strong>26 LGAs</strong> Borno State's own PHC
+    Workers Baseline Mapping Exercise report (Table 1, p.21-22) lists: ABADAM, ASKIRA/UBA, BAMA, BAYO, BIU, CHIBOK, DAMBOA, DIKWA, GUBIO, GWOZA, HAWUL, JERE, KAGA, KALA/BALGE, KONDUGA, KUKAWA, KWAYA KUSAR, MAFA, MAGUMERI, MAIDUGURI, MARTE, MOBBAR, MONGUNO, NGALA, NGANZAI, SHANI.</p>
+    <p class="callout"><strong>GUZAMALA is explicitly excluded</strong> --
+    it is entirely absent from Table 1 in the primary source document itself, not an
+    assessment result. Borno State officially has 27 LGAs; the source document's own
+    per-LGA current-headcount table lists only 26. GUZAMALA has zero
+    current-headcount data in this dataset and cannot be a transfer source or destination
+    in this phase -- not because it doesn't need staff (plausibly the opposite, given its
+    documented severe conflict exposure), but because the primary source provides no data
+    for it. Do not read GUZAMALA's absence from this report as "assessed,
+    found not to need staff."</p>
+    
+    
+  </div>
+
+  <div class="panel">
+    <h2>The per-cadre floor -- what it is and isn't</h2>
+    <p class="callout">The floor used here (a transfer cannot reduce an LGA's headcount for a
+      given cadre below 1, if that LGA currently has 1 or more of that cadre) is
+      <strong>this artifact's own, disclosed, artifact-imposed safety constraint</strong> --
+      chosen by the builder to prevent the optimizer from proposing something absurd, like
+      eliminating a cadre entirely from an LGA that currently has it. It is
+      <strong>not</strong> NPHCDA's minimum staffing standard (PDF Table 6, p.26 -- e.g. 4
+      Nurses/Midwives, 6 JCHEWs, 3 CHEWs per facility) and not a Sand-specified requirement.
+      Meeting this floor is <strong>not</strong> the same as meeting NPHCDA's minimum standard --
+      most LGAs already fall below that aspirational target before any transfer happens, and
+      pure reallocation of the existing workforce cannot achieve it (that requires the PDF's
+      separate 2,860-worker, five-year recruitment plan, which this artifact does not model).
+      The floor applies per cadre independently, never as a combined-total floor across an LGA's
+      cadres.</p>
+  </div>
+
+  <div class="panel unimplemented">
+    <h2>Insecure-ward flag -- not yet implemented</h2>
+    <p class="warn">Borno's own baseline report states that 38 wards currently have no
+      operational PHC facility, "primarily because of the security situation" (p.12), and that
+      these insecure wards are "distributed across several LGAs in the most conflict-affected
+      zones" -- but the source document publishes <strong>no per-LGA breakdown</strong> of which
+      LGAs those 38 wards fall in. This flag is <strong>not yet implemented</strong>, not
+      silently omitted and not a false-negative "no flags found": there is currently no sourced
+      mapping from the 38 insecure wards to LGAs to check any proposed transfer against.</p>
+    <p>This is deliberately <strong>not</strong> approximated by proxying from facility-coverage
+      gaps (e.g. treating Kala Balge, Marte, or Biu -- named in the PDF, p.13, as having "the
+      lowest coverage" -- as a stand-in for insecurity). Low facility coverage and ward-level
+      insecurity are correlated in the report's own narrative but are not the same measured
+      quantity; treating them as interchangeable would silently launder an assumption into a
+      fact (ULTIMATE_PRD.md Sec.2 finding 4). Resolving this requires either a supplementary
+      section of the underlying State HRH database or direct confirmation from Borno SPHCDB
+      (ULTIMATE_PRD.md Sec.8) -- an open architecture question, not a resolved one. Until then,
+      any proposed transfer above should be screened by a human reviewer with local knowledge of
+      which LGAs are conflict-affected before being treated as more than a decision-support
+      draft.</p>
+  </div>
+
+  <p class="footnote">
+    Source: Borno State Ministry of Health and Human Services / Borno State Primary Healthcare
+    Development Board, <em>Report of Baseline Mapping Exercise for Primary Healthcare Workers in
+    Borno State</em>, February 2025 (reference/borno_phc_baseline.pdf). Every figure in this
+    report traces to that PDF's own Table 1/4/6/Figures 1-2 or the disclosed population-proxy
+    derivation in ULTIMATE_PRD.md Sec.3.2 -- no invented, estimated, or LLM-recalled figure
+    stands in for a real one anywhere in this pipeline (ULTIMATE_PRD.md Sec.6).
+  </p>
+</div>
+</body>
+</html>
